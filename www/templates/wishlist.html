@@ -1,0 +1,23 @@
+<ion-view view-title="Wishlist">
+    <ion-nav-buttons side="right">
+        <button class="button button-icon button-clear ion-ios-plus-outline" ng-click='addWish()'>
+        </button>
+    </ion-nav-buttons>
+    <ion-content>
+        <div class="card" ng-repeat="wish in wishlist">
+            <div class="item item-divider">
+                <h2 style="position:absolute;">[{{$index + 1}}] {{wish.name}}</h2>
+                <div style="position:absolute;right:0px;margin-top:-4px">
+                    <a class="button button-small button-icon icon ion-ios-compose-outline"></a>
+                    <a class="button button-small button-icon icon ion-ios-close-empty" ng-click='removeWish(wish.$id)'></a>
+                </div>
+            </div>
+            <div class="item item-text-wrap">
+                {{wish.detail}}
+            </div>
+            <div class="item item-divider" ng-if="wish.url">
+                <a href='{{wish.url}}'>{{wish.url}}</a>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

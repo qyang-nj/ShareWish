@@ -1,0 +1,21 @@
+<ion-view>
+    <ion-nav-buttons side="right">
+        <button class="button button-icon button-clear ion-ios-checkmark-outline" ng-click="saveWish()">
+        </button>
+    </ion-nav-buttons>
+    <ion-content>
+        <label class="item item-input">
+            <span class="input-label">Name</span>
+            <input type="text" required='true' ng-model="wish.name">
+        </label>
+        <label class="item item-input">
+            <span class="input-label">URL</span>
+            <input type="text" ng-model="wish.url">
+        </label>
+        </label>
+        <label class="item item-input item-stacked-label">
+            <span class="input-label">Detail</span>
+            <textarea ng-model="wish.detail"></textarea>
+        </label>
+    </ion-content>
+</ion-view>

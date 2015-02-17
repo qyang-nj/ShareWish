@@ -1,0 +1,37 @@
+<ion-side-menus enable-menu-with-back-views="false">
+    <ion-side-menu-content>
+        <ion-nav-bar class="bar-stable">
+            <ion-nav-back-button>
+            </ion-nav-back-button>
+
+            <ion-nav-buttons side="left">
+                <button class="button button-icon button-clear ion-navicon" menu-toggle="left">
+                </button>
+            </ion-nav-buttons>
+        </ion-nav-bar>
+        <ion-nav-view name="content"></ion-nav-view>
+    </ion-side-menu-content>
+
+    <ion-side-menu side="left">
+        <ion-content>
+            <div class="item item-divider">WISHLISTS</div>
+            <ion-list>
+                <ion-item nav-clear menu-close href="#/app/playlists">
+                    My Wishlist
+                </ion-item>
+            </ion-list>
+            <div class="item item-divider">SETTINGS</div>
+            <ion-list>
+                <ion-item nav-clear menu-close>
+                    Share
+                </ion-item>
+                <ion-item nav-clear menu-close ng-click="login()" ng-show="!authData">
+                    Login
+                </ion-item>
+                <ion-item nav-clear menu-close ng-click="logout()" ng-show="authData">
+                    Logout
+                </ion-item>
+            </ion-list>
+        </ion-content>
+    </ion-side-menu>
+</ion-side-menus>
