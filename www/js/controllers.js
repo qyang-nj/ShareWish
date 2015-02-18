@@ -177,6 +177,18 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
 
         $scope.add = function() {
             var email = $scope.inputData.email;
+            if (email == authData.password.email) { /* user-self */
+                console.log('Please enter email address other than yours.');
+                return;
+            }
+
+            for (var i = 0; i < shareList.length; ++i) {
+                if (shareList[i].email == email) { /* duplicate */
+                    console.log(email + ' already in your share list.');
+                    return;
+                }
+            }
+
             if (validateEmail(email)) {
                 var emailKey = $scope.emailToKey(email);
                 var uidObj = $firebase(ref.child('sys/emailUidMap/' + emailKey)).$asObject();
