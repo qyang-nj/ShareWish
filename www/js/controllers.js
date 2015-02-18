@@ -19,18 +19,17 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
         $scope.authData = authData;
 
         var list = $firebase(ref.child('users/' + authData.uid + '/public/besharedList')).$asArray();
-        list.$loaded().then(function() {
-            $scope.beSharedList = [];
-            list.forEach(function(entry) {
-                $firebase(ref.child('users/' + entry.$value + '/share/displayName/')).$asObject().$loaded().then(function(dName) {
-                    var o = {
-                        uid: entry.$value,
-                        displayName: dName.$value
-                    };
-                    $scope.beSharedList.push(o);
+        list.$watch(function(event) {
+            if (event.event == 'child_added') {
+                var rec = list.$getRecord(event.key);
+                $firebase(ref.child('users/' + rec.$value + '/share/displayName/')).$asObject().$loaded().then(function(dName) {
+                    rec.uid = rec.$value;
+                    rec.displayName = dName.$value;
                 });
-            });
+            }
+
         });
+        $scope.beSharedList = list;
     });
 
     // Form data for the login modal
