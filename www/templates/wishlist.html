@@ -8,9 +8,8 @@
             <div class="item item-divider">
                 <h2 style="position:absolute;">[{{$index + 1}}] {{wish.name}}</h2>
                 <div style="position:absolute;right:0px;margin-top:-4px">
-                    <a class="button button-small button-icon icon ion-ios-compose-outline" 
-                        href="#/app/wish?wishId={{wish.$id}}"></a>
-                    <a class="button button-small button-icon icon ion-ios-close-empty" ng-click='removeWish(wish.$id)'></a>
+                    <a class="button button-small button-icon icon ion-ios-compose-outline" href="#/app/wish?wishId={{wish.$id}}" ng-show='editable'></a>
+                    <a class="button button-small button-icon icon ion-ios-close-empty" ng-click='removeWish(wish.$id)' ng-show='editable'></a>
                 </div>
             </div>
             <div class="item item-text-wrap">

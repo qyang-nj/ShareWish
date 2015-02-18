@@ -1,10 +1,11 @@
-angular.module('starter.controllers', ['ngStorage', 'firebase'])
+angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $firebase, $firebaseAuth) {
     /* Firebase keys cannot have a period (.) in them, so this converts the emails to valid keys */
     function emailToKey(emailAddress) {
         return emailAddress.replace('.', ',');
     }
+    $scope.emailToKey = emailToKey;
 
     var ref = new Firebase("https://lovers-wish.firebaseio.com/");
     var auth = $firebaseAuth(ref);
@@ -16,6 +17,20 @@ angular.module('starter.controllers', ['ngStorage', 'firebase'])
 
         console.log("[AppCtrl] Authenticated user with uid:", authData.uid);
         $scope.authData = authData;
+
+        var list = $firebase(ref.child('users/' + authData.uid + '/public/besharedList')).$asArray();
+        list.$loaded().then(function() {
+            $scope.beSharedList = [];
+            list.forEach(function(entry) {
+                $firebase(ref.child('users/' + entry.$value + '/share/displayName/')).$asObject().$loaded().then(function(dName) {
+                    var o = {
+                        uid: entry.$value,
+                        displayName: dName.$value
+                    };
+                    $scope.beSharedList.push(o);
+                });
+            });
+        });
     });
 
     // Form data for the login modal
@@ -64,7 +79,9 @@ angular.module('starter.controllers', ['ngStorage', 'firebase'])
         } else { //sign up
             auth.$createUser($scope.loginData).then(function(userData) {
                 console.log("User " + userData.uid + " created successfully!");
-                $firebase(ref.child('users/' + userData.uid + '/share/wishlist/')).$set(userData.uid);
+                $firebase(ref.child('sys/emailUidMap/' + $scope.emailToKey($scope.loginData.email))).$set({
+                    'uid': userData.uid
+                });
                 $firebase(ref.child('users/' + userData.uid + '/share/displayName/')).$set($scope.loginData.displayName);
 
                 $scope.loginMode = true;
@@ -86,7 +103,7 @@ angular.module('starter.controllers', ['ngStorage', 'firebase'])
     }
 })
 
-.controller('WishlistCtrl', function($scope, $state, $firebase, $firebaseAuth) {
+.controller('WishlistCtrl', function($scope, $state, $stateParams, $firebase, $firebaseAuth) {
     var ref = new Firebase("https://lovers-wish.firebaseio.com/");
     $firebaseAuth(ref).$onAuth(function(authData) {
         if (!authData) {
@@ -96,7 +113,10 @@ angular.module('starter.controllers', ['ngStorage', 'firebase'])
 
         console.log("[WishlistCtrl] Authenticated user with uid:", authData.uid);
 
-        var wishlist = $firebase(ref.child('users/' + authData.uid + '/share/wishlist/')).$asArray();
+        $scope.editable = $stateParams.uid ? false : true;
+        var uid = $stateParams.uid || authData.uid;
+
+        var wishlist = $firebase(ref.child('users/' + uid + '/share/wishlist/')).$asArray();
         $scope.wishlist = wishlist;
 
         $scope.removeWish = function(wishId) {
@@ -138,7 +158,7 @@ angular.module('starter.controllers', ['ngStorage', 'firebase'])
     });
 })
 
-.controller('ShareCtrl', function($scope, $firebase, $firebaseAuth) {
+.controller('ShareCtrl', function($scope, $cordovaToast, $firebase, $firebaseAuth, $cordovaToast) {
     $scope.inputData = {};
 
     function validateEmail(email) {
@@ -158,14 +178,44 @@ angular.module('starter.controllers', ['ngStorage', 'firebase'])
         $scope.add = function() {
             var email = $scope.inputData.email;
             if (validateEmail(email)) {
-                $scope.shareList.$add($scope.inputData.email);
+                var emailKey = $scope.emailToKey(email);
+                var uidObj = $firebase(ref.child('sys/emailUidMap/' + emailKey)).$asObject();
+                uidObj.$loaded().then(function() {
+                    var uid = uidObj.$value;
+                    if (uid) {
+                        $scope.shareList.$add(email);
+                        var list = $firebase(ref.child('users/' + uid + '/public/besharedList')).$asArray();
+                        list.$add(authData.uid);
+                    } else {
+                        console.log(email + ' is not a registered user.');
+                    }
+
+                }).catch(function(error) {
+                    console.error("Error:", error);
+                });
+            } else {
+                console.log('Please input a valid email address.');
             }
+        }
 
-        };
-
-        $scope.del = function(shareId) {
+        $scope.del = function(shareId, shareEmail) {
             var shareList = $scope.shareList;
             shareList.$remove(shareList.$indexFor(shareId));
-        }
+
+            var emailKey = $scope.emailToKey(shareEmail);
+            $firebase(ref.child('sys/emailUidMap/' + emailKey)).$asObject().$loaded().then(function(uidObj) {
+                var uid = uidObj.$value;
+                if (uid) {
+                    $firebase(ref.child('users/' + uid + '/public/besharedList')).$asArray().$loaded().then(function(list) {
+                        for (var i = 0; i < list.length; ++i) {
+                            if (list[i].$value == uid) {
+                                list.$remove(i);
+                                break;
+                            }
+                        }
+                    });
+                }
+            });
+        };
     });
 });

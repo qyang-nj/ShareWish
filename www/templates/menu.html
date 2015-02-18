@@ -16,8 +16,11 @@
         <ion-content>
             <div class="item item-divider">WISHLISTS</div>
             <ion-list>
-                <ion-item nav-clear menu-close href="#/app/playlists">
+                <ion-item nav-clear menu-close href="#/app/wishlist">
                     My Wishlist
+                </ion-item>
+                <ion-item nav-clear menu-close href="#/app/wishlist?uid={{share.uid}}" ng-repeat="share in beSharedList">
+                    {{share.displayName}} + {{share.uid}}
                 </ion-item>
             </ion-list>
             <div class="item item-divider">SETTINGS</div>
