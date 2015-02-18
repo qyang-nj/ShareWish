@@ -110,18 +110,29 @@ angular.module('starter.controllers', ['ngStorage', 'firebase'])
     };
 })
 
-.controller('WishCtrl', function($scope, $ionicHistory, $firebase, $firebaseAuth) {
+.controller('WishCtrl', function($scope, $ionicHistory, $stateParams, $firebase, $firebaseAuth) {
     $scope.wish = {};
 
     var ref = new Firebase("https://lovers-wish.firebaseio.com/");
     $firebaseAuth(ref).$onAuth(function(authData) {
         if (!authData) return;
 
+        var editMode = $stateParams.wishId ? true : false;
+
+        if (editMode) {
+            $scope.wish = $firebase(ref.child('users/' + authData.uid + '/share/wishlist/' + $stateParams.wishId))
+                .$asObject();
+        }
+
         console.log("[WishCtrl] Authenticated user with uid:", authData.uid);
 
         $scope.saveWish = function() {
-            var wishlist = $firebase(ref.child('users/' + authData.uid + '/share/wishlist/')).$asArray();
-            wishlist.$add($scope.wish);
+            if (editMode) {
+                $scope.wish.$save();
+            } else { /* createMode */
+                var wishlist = $firebase(ref.child('users/' + authData.uid + '/share/wishlist/')).$asArray();
+                wishlist.$add($scope.wish);
+            }
             $ionicHistory.backView().go();
         };
     });

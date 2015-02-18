@@ -38,7 +38,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             }
         })
         .state('app.wish', {
-            url: "/wish",
+            url: "/wish?wishId",
             views: {
                 'content': {
                     templateUrl: "templates/wish.html",
