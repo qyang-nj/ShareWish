@@ -26,6 +26,7 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
                     rec.uid = rec.$value;
                     rec.displayName = dName.$value;
                 });
+                console.log(rec);
             }
 
         });
@@ -181,18 +182,22 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
                 var uidObj = $firebase(ref.child('sys/emailUidMap/' + emailKey)).$asObject();
                 uidObj.$loaded().then(function() {
                     var uid = uidObj.$value;
-                    if (uid) {
-                        $scope.shareList.$add(email);
+                    if (uid) { /* Successful */
+                        $scope.shareList.$add($scope.inputData);
+
                         var list = $firebase(ref.child('users/' + uid + '/public/besharedList')).$asArray();
                         list.$add(authData.uid);
-                    } else {
+
+                        /* clear */
+                        $scope.inputData = {};
+                    } else { /* Not a registered user */
                         console.log(email + ' is not a registered user.');
                     }
 
                 }).catch(function(error) {
                     console.error("Error:", error);
                 });
-            } else {
+            } else { /* invalid email address */
                 console.log('Please input a valid email address.');
             }
         }

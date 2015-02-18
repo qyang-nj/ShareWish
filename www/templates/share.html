@@ -1,17 +1,21 @@
 <ion-view title='Share'>
     <ion-content>
-        <div class="item item-input-inset">
-            <label class="item-input-wrapper">
-                <input type="text" placeholder="Email" ng-model='inputData.email'>
-            </label>
-            <button class="button button-small" ng-click='add()'>Add</button>
-        </div>
-
         <div class="list">
             <div class="item item-button-right" ng-repeat='share in shareList'>
-                {{share.$value}}
-                <a class="button button-icon icon ion-ios-close-empty" ng-click='del(share.$id, share.$value)'></a>
+                <h2>{{share.name}}</h2>
+                <p>{{share.email}}</p>
+                <a class="button button-icon icon ion-ios-close-empty" ng-click='del(share.$id, share.email)'></a>
             </div>
+        </div>
+
+        <div class="list list-inset">
+            <label class="item item-input">
+                <input type="text" placeholder="Name" ng-model='inputData.name'>
+            </label>
+            <label class="item item-input">
+                <input type="text" placeholder="Email" ng-model='inputData.email'>
+            </label>
+            <button class="button button-small button-block" ng-click='add()'>Add</button>
         </div>
     </ion-content>
 </ion-view>
