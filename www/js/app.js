@@ -45,6 +45,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
                     controller: 'WishCtrl'
                 }
             }
+        })
+        .state('app.share', {
+            url: "/share",
+            views: {
+                'content': {
+                    templateUrl: "templates/share.html",
+                    controller: 'ShareCtrl'
+                }
+            }
         });
 
     // if none of the above states are matched, use this as the fallback

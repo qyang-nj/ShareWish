@@ -136,4 +136,36 @@ angular.module('starter.controllers', ['ngStorage', 'firebase'])
             $ionicHistory.backView().go();
         };
     });
+})
+
+.controller('ShareCtrl', function($scope, $firebase, $firebaseAuth) {
+    $scope.inputData = {};
+
+    function validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+
+    var ref = new Firebase("https://lovers-wish.firebaseio.com/");
+    $firebaseAuth(ref).$onAuth(function(authData) {
+        if (!authData) return;
+
+        console.log("[ShareCtrl] Authenticated user with uid:", authData.uid);
+
+        var shareList = $firebase(ref.child('users/' + authData.uid + '/private/shareList/')).$asArray();
+        $scope.shareList = shareList;
+
+        $scope.add = function() {
+            var email = $scope.inputData.email;
+            if (validateEmail(email)) {
+                $scope.shareList.$add($scope.inputData.email);
+            }
+
+        };
+
+        $scope.del = function(shareId) {
+            var shareList = $scope.shareList;
+            shareList.$remove(shareList.$indexFor(shareId));
+        }
+    });
 });
