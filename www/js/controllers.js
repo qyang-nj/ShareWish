@@ -59,8 +59,6 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
     // Perform the login action when the user submits the login form
     $scope.doLogin = function() {
-        console.log('Doing login', $scope.loginMode, $scope.loginData);
-
         if ($scope.loginMode) { /* Login */
             auth.$authWithPassword($scope.loginData).then(function(authData) {
                 console.log("Authenticated successfully with payload:", authData);

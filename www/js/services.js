@@ -3,7 +3,7 @@ angular.module('app.services', ['ngCordova'])
 .service('Utils', function($cordovaToast) {
     /* Firebase keys cannot have a period (.) in them, so this converts the emails to valid keys */
     this.emailToKey = function(emailAddress) {
-        return emailAddress.replace('.', ',');
+        return emailAddress.replace(/\./g, ',');
     };
 
     this.validateEmail = function validateEmail(email) {
@@ -12,12 +12,19 @@ angular.module('app.services', ['ngCordova'])
     };
 
     this.toastLong = function(message) {
-        console.log(message);
-        $cordovaToast.showLongBottom(message);
+        try {
+            $cordovaToast.showLongBottom(message);
+        } catch (err) {
+            console.log(message);
+        }
     };
 
     this.toastShort = function(message) {
         console.log(message);
-        $cordovaToast.showShortBottom(message);
+        try {
+            $cordovaToast.showShortBottom(message);
+        } catch (err) {
+            console.log(message);
+        }
     };
 });
