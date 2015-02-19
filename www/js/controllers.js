@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $firebase, $firebaseAuth) {
+.controller('AppCtrl', function($scope, $state, $ionicModal, $firebase, $firebaseAuth) {
     /* Firebase keys cannot have a period (.) in them, so this converts the emails to valid keys */
     function emailToKey(emailAddress) {
         return emailAddress.replace('.', ',');
@@ -9,42 +9,41 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
 
     var ref = new Firebase("https://lovers-wish.firebaseio.com/");
     var auth = $firebaseAuth(ref);
-    auth.$onAuth(function(authData) {
-        if (!authData) {
-            delete $scope.authData;
-            return;
-        }
 
-        console.log("[AppCtrl] Authenticated user with uid:", authData.uid);
-        $scope.authData = authData;
+    /* Create the login modal that we will use later */
+    $ionicModal.fromTemplateUrl('templates/login.html', {
+        scope: $scope
+    }).then(function(modal) {
+        $scope.modal = modal;
 
-        var list = $firebase(ref.child('users/' + authData.uid + '/public/besharedList')).$asArray();
-        list.$watch(function(event) {
-            if (event.event == 'child_added') {
-                var rec = list.$getRecord(event.key);
-                $firebase(ref.child('users/' + rec.$value + '/share/displayName/')).$asObject().$loaded().then(function(dName) {
-                    rec.uid = rec.$value;
-                    rec.displayName = dName.$value;
-                });
-                console.log(rec);
+        auth.$onAuth(function(authData) {
+            if (!authData) {
+                delete $scope.authData;
+                $scope.login();
+                return;
             }
 
+            console.log("[AppCtrl] Authenticated user with uid:", authData.uid);
+            $scope.authData = authData;
+
+            var list = $firebase(ref.child('users/' + authData.uid + '/public/besharedList')).$asArray();
+            list.$watch(function(event) {
+                if (event.event == 'child_added') {
+                    var rec = list.$getRecord(event.key);
+                    $firebase(ref.child('users/' + rec.$value + '/share/displayName/')).$asObject().$loaded().then(function(dName) {
+                        rec.uid = rec.$value;
+                        rec.displayName = dName.$value;
+                    });
+                }
+            });
+            $scope.beSharedList = list;
         });
-        $scope.beSharedList = list;
     });
 
     // Form data for the login modal
     $scope.loginData = {};
     $scope.loginMode = true;
 
-    // Create the login modal that we will use later
-    $ionicModal.fromTemplateUrl('templates/login.html', {
-        scope: $scope
-    }).then(function(modal) {
-        $scope.modal = modal;
-    });
-
-    // Open the login modal
     $scope.login = function() {
         $scope.modal.show();
     };
@@ -57,12 +56,17 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
     $scope.closeLogin = function() {
         $scope.modal.hide();
         $scope.loginMode = true;
-        delete $scope.errMsg;
+        $scope.clearErrMsg();
     };
 
-    $scope.signupMode = function() {
-        $scope.loginMode = false;
+    $scope.setLoginMode = function(loginMode) {
+        $scope.loginMode = loginMode;
+        $scope.clearErrMsg();
     };
+
+    $scope.clearErrMsg = function() {
+        delete $scope.errMsg;
+    }
 
     // Perform the login action when the user submits the login form
     $scope.doLogin = function() {
@@ -73,8 +77,7 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
                 console.log("Authenticated successfully with payload:", authData);
                 $scope.closeLogin();
             }).catch(function(error) {
-                $scope.errMsg = "Login Failed! " + error;
-                console.log("Login Failed!", error);
+                $scope.errMsg = error.message;
             });
         } else { //sign up
             auth.$createUser($scope.loginData).then(function(userData) {
@@ -87,17 +90,7 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
                 $scope.loginMode = true;
                 $scope.doLogin();
             }).catch(function(error) {
-                switch (error.code) {
-                    case "EMAIL_TAKEN":
-                        $scope.errMsg = "The new user account cannot be created because the email is already in use.";
-                        break;
-                    case "INVALID_EMAIL":
-                        $scope.errMsg = "The specified email is not a valid email.";
-                        break;
-                    default:
-                        $scope.errMsg = "Error creating user:" + error;
-                }
-                console.log('error: ', error);
+                $scope.errMsg = error.message;
             });
         }
     }
@@ -153,7 +146,7 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
                 var wishlist = $firebase(ref.child('users/' + authData.uid + '/share/wishlist/')).$asArray();
                 wishlist.$add($scope.wish);
             }
-            $ionicHistory.backView().go();
+            $ionicHistory.goBack();
         };
     });
 })
