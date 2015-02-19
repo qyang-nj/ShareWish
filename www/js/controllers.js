@@ -144,7 +144,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     });
 })
 
-.controller('ShareCtrl', function($scope, $cordovaToast, $firebase, $firebaseAuth, $cordovaToast, Uitls) {
+.controller('ShareCtrl', function($scope, $ionicPopup, $firebase, $firebaseAuth, Uitls) {
     $scope.inputData = {};
 
     var ref = new Firebase("https://lovers-wish.firebaseio.com/");
@@ -185,6 +185,14 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                         $scope.inputData = {};
                     } else { /* Not a registered user */
                         console.log(email + ' is not a registered user.');
+                        $ionicPopup.confirm({
+                            title: 'Invite ' + email + '?',
+                            template: email + ' is not a registered user. Do you want to invite him/her to use Lover\'s Wish?'
+                        }).then(function(res) {
+                            if (res) {
+                                //TODO: send invitation
+                            }
+                        });
                     }
 
                 }).catch(function(error) {
