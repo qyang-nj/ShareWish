@@ -159,7 +159,9 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'ngCordova',
         $scope.add = function() {
             var email = $scope.inputData.email;
             if (email == authData.password.email) { /* user-self */
-                console.log('Please enter email address other than yours.');
+                var errMsg = 'Please enter email address other than yours.';
+                console.log(errMsg);
+                $cordovaToast.showLongBottom(errMsg);
                 return;
             }
 
