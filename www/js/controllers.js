@@ -83,9 +83,7 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
         } else { //sign up
             auth.$createUser($scope.loginData).then(function(userData) {
                 console.log("User " + userData.uid + " created successfully!");
-                $firebase(ref.child('sys/emailUidMap/' + $scope.emailToKey($scope.loginData.email))).$set({
-                    'uid': userData.uid
-                });
+                $firebase(ref.child('sys/emailUidMap/' + $scope.emailToKey($scope.loginData.email))).$set(userData.uid);
                 $firebase(ref.child('users/' + userData.uid + '/share/displayName/')).$set($scope.loginData.displayName);
 
                 $scope.loginMode = true;
