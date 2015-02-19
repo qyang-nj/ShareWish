@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['app.services', 'ngStorage', 'ngCordova', 'firebase'])
+angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
 .controller('AppCtrl', function($scope, $state, $ionicModal, $firebase, $firebaseAuth, Uitls) {
     var ref = new Firebase("https://lovers-wish.firebaseio.com/");
@@ -159,21 +159,19 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'ngCordova',
         $scope.add = function() {
             var email = $scope.inputData.email;
             if (email == authData.password.email) { /* user-self */
-                var errMsg = 'Please enter email address other than yours.';
-                console.log(errMsg);
-                $cordovaToast.showLongBottom(errMsg);
+                Uitls.toastLong('Please enter email address other than yours.');
                 return;
             }
 
             for (var i = 0; i < shareList.length; ++i) {
                 if (shareList[i].email == email) { /* duplicate */
-                    console.log(email + ' already in your share list.');
+                    Uitls.toastLong(email + ' already in your share list.');
                     return;
                 }
             }
 
             if (Uitls.validateEmail(email)) {
-                var emailKey = $scope.emailToKey(email);
+                var emailKey = Uitls.emailToKey(email);
                 var uidObj = $firebase(ref.child('sys/emailUidMap/' + emailKey)).$asObject();
                 uidObj.$loaded().then(function() {
                     var uid = uidObj.$value;
@@ -193,7 +191,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'ngCordova',
                     console.error("Error:", error);
                 });
             } else { /* invalid email address */
-                console.log('Please input a valid email address.');
+                Uitls.toastLong('Please input a valid email address.');
             }
         }
 
