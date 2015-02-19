@@ -12,7 +12,8 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
 
     /* Create the login modal that we will use later */
     $ionicModal.fromTemplateUrl('templates/login.html', {
-        scope: $scope
+        scope: $scope,
+        hardwareBackButtonClose: false
     }).then(function(modal) {
         $scope.modal = modal;
 
