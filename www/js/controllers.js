@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
-.controller('AppCtrl', function($scope, $state, $ionicModal, $firebase, $firebaseAuth, Uitls) {
+.controller('AppCtrl', function($scope, $state, $ionicModal, $firebase, $firebaseAuth, Utils) {
     var ref = new Firebase("https://lovers-wish.firebaseio.com/");
     var auth = $firebaseAuth(ref);
 
@@ -51,17 +51,11 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     $scope.closeLogin = function() {
         $scope.modal.hide();
         $scope.loginMode = true;
-        $scope.clearErrMsg();
     };
 
     $scope.setLoginMode = function(loginMode) {
         $scope.loginMode = loginMode;
-        $scope.clearErrMsg();
     };
-
-    $scope.clearErrMsg = function() {
-        delete $scope.errMsg;
-    }
 
     // Perform the login action when the user submits the login form
     $scope.doLogin = function() {
@@ -72,18 +66,18 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                 console.log("Authenticated successfully with payload:", authData);
                 $scope.closeLogin();
             }).catch(function(error) {
-                $scope.errMsg = error.message;
+                Utils.toastLong(error.message);
             });
         } else { //sign up
             auth.$createUser($scope.loginData).then(function(userData) {
                 console.log("User " + userData.uid + " created successfully!");
-                $firebase(ref.child('sys/emailUidMap/' + Uitls.emailToKey($scope.loginData.email))).$set(userData.uid);
+                $firebase(ref.child('sys/emailUidMap/' + Utils.emailToKey($scope.loginData.email))).$set(userData.uid);
                 $firebase(ref.child('users/' + userData.uid + '/share/displayName/')).$set($scope.loginData.displayName);
 
                 $scope.loginMode = true;
                 $scope.doLogin();
             }).catch(function(error) {
-                $scope.errMsg = error.message;
+                Utils.toastLong(error.message);
             });
         }
     }
@@ -144,7 +138,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     });
 })
 
-.controller('ShareCtrl', function($scope, $ionicPopup, $firebase, $firebaseAuth, Uitls) {
+.controller('ShareCtrl', function($scope, $ionicPopup, $firebase, $firebaseAuth, Utils) {
     $scope.inputData = {};
 
     var ref = new Firebase("https://lovers-wish.firebaseio.com/");
@@ -159,19 +153,19 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         $scope.add = function() {
             var email = $scope.inputData.email;
             if (email == authData.password.email) { /* user-self */
-                Uitls.toastLong('Please enter email address other than yours.');
+                Utils.toastLong('Please enter email address other than yours.');
                 return;
             }
 
             for (var i = 0; i < shareList.length; ++i) {
                 if (shareList[i].email == email) { /* duplicate */
-                    Uitls.toastLong(email + ' already in your share list.');
+                    Utils.toastLong(email + ' already in your share list.');
                     return;
                 }
             }
 
-            if (Uitls.validateEmail(email)) {
-                var emailKey = Uitls.emailToKey(email);
+            if (Utils.validateEmail(email)) {
+                var emailKey = Utils.emailToKey(email);
                 var uidObj = $firebase(ref.child('sys/emailUidMap/' + emailKey)).$asObject();
                 uidObj.$loaded().then(function() {
                     var uid = uidObj.$value;
@@ -199,7 +193,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                     console.error("Error:", error);
                 });
             } else { /* invalid email address */
-                Uitls.toastLong('Please input a valid email address.');
+                Utils.toastLong('Please input a valid email address.');
             }
         }
 
@@ -207,7 +201,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             var shareList = $scope.shareList;
             shareList.$remove(shareList.$indexFor(shareId));
 
-            var emailKey = Uitls.emailToKey(shareEmail);
+            var emailKey = Utils.emailToKey(shareEmail);
             $firebase(ref.child('sys/emailUidMap/' + emailKey)).$asObject().$loaded().then(function(uidObj) {
                 var uid = uidObj.$value;
                 if (uid) {

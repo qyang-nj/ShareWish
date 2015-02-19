@@ -17,11 +17,11 @@
                     <span class="input-label">Display name</span>
                     <input type="text" required='true' ng-model="loginData.displayName">
                 </label>
-                <label class="item" ng-show='errMsg'>
-                    <p style='color: red;'>{{errMsg}}</p>
-                </label>
                 <label class="item">
-                    <button class="button button-block button-positive" type="submit">{{loginMode ? 'Login' : 'Sign up'}}</button>
+                    <button class="button button-block button-positive" type="submit"
+                        ng-disabled="!loginData.email || !loginData.password || (loginMode ? false : !loginData.displayName) ">
+                        {{loginMode ? 'Login' : 'Sign up'}}
+                    </button>
                 </label>
                 <div class="item item-divider" ng-show='loginMode' style='text-align: center;'>
                     Don't have an account? <a ng-click='setLoginMode(false)' href="#">Sign up</a>

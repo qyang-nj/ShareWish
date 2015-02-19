@@ -1,6 +1,6 @@
 angular.module('app.services', ['ngCordova'])
 
-.service('Uitls', function($cordovaToast) {
+.service('Utils', function($cordovaToast) {
     /* Firebase keys cannot have a period (.) in them, so this converts the emails to valid keys */
     this.emailToKey = function(emailAddress) {
         return emailAddress.replace('.', ',');
@@ -18,6 +18,6 @@ angular.module('app.services', ['ngCordova'])
 
     this.toastShort = function(message) {
         console.log(message);
-        //$cordovaToast.showShortBottom(message);
+        $cordovaToast.showShortBottom(message);
     };
 });
