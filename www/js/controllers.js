@@ -1,12 +1,6 @@
-angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
+angular.module('starter.controllers', ['app.services', 'ngStorage', 'ngCordova', 'firebase'])
 
-.controller('AppCtrl', function($scope, $state, $ionicModal, $firebase, $firebaseAuth) {
-    /* Firebase keys cannot have a period (.) in them, so this converts the emails to valid keys */
-    function emailToKey(emailAddress) {
-        return emailAddress.replace('.', ',');
-    }
-    $scope.emailToKey = emailToKey;
-
+.controller('AppCtrl', function($scope, $state, $ionicModal, $firebase, $firebaseAuth, Uitls) {
     var ref = new Firebase("https://lovers-wish.firebaseio.com/");
     var auth = $firebaseAuth(ref);
 
@@ -83,7 +77,7 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
         } else { //sign up
             auth.$createUser($scope.loginData).then(function(userData) {
                 console.log("User " + userData.uid + " created successfully!");
-                $firebase(ref.child('sys/emailUidMap/' + $scope.emailToKey($scope.loginData.email))).$set(userData.uid);
+                $firebase(ref.child('sys/emailUidMap/' + Uitls.emailToKey($scope.loginData.email))).$set(userData.uid);
                 $firebase(ref.child('users/' + userData.uid + '/share/displayName/')).$set($scope.loginData.displayName);
 
                 $scope.loginMode = true;
@@ -150,13 +144,8 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
     });
 })
 
-.controller('ShareCtrl', function($scope, $cordovaToast, $firebase, $firebaseAuth, $cordovaToast) {
+.controller('ShareCtrl', function($scope, $cordovaToast, $firebase, $firebaseAuth, $cordovaToast, Uitls) {
     $scope.inputData = {};
-
-    function validateEmail(email) {
-        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        return re.test(email);
-    }
 
     var ref = new Firebase("https://lovers-wish.firebaseio.com/");
     $firebaseAuth(ref).$onAuth(function(authData) {
@@ -181,7 +170,7 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
                 }
             }
 
-            if (validateEmail(email)) {
+            if (Uitls.validateEmail(email)) {
                 var emailKey = $scope.emailToKey(email);
                 var uidObj = $firebase(ref.child('sys/emailUidMap/' + emailKey)).$asObject();
                 uidObj.$loaded().then(function() {
@@ -210,7 +199,7 @@ angular.module('starter.controllers', ['ngStorage', 'ngCordova', 'firebase'])
             var shareList = $scope.shareList;
             shareList.$remove(shareList.$indexFor(shareId));
 
-            var emailKey = $scope.emailToKey(shareEmail);
+            var emailKey = Uitls.emailToKey(shareEmail);
             $firebase(ref.child('sys/emailUidMap/' + emailKey)).$asObject().$loaded().then(function(uidObj) {
                 var uid = uidObj.$value;
                 if (uid) {
