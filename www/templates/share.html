@@ -7,15 +7,19 @@
                 <a class="button button-icon icon ion-ios-close-empty" ng-click='del(share.$id, share.email)'></a>
             </div>
         </div>
-
-        <div class="list list-inset">
-            <label class="item item-input">
-                <input type="text" placeholder="Name" ng-model='inputData.name'>
-            </label>
-            <label class="item item-input">
-                <input type="text" placeholder="Email" ng-model='inputData.email'>
-            </label>
-            <button class="button button-small button-block" ng-click='add()'>Add</button>
-        </div>
     </ion-content>
+
+    <div class="bar bar-footer" style="height: 170px;">
+        <div class="list list-inset" style="margin-left: 10px; margin-right: 10px; width: 100%;">
+            <form ng-submit="add()">
+                <label class="item item-input">
+                    <input type="text" placeholder="Name" ng-model='inputData.name' required='true'>
+                </label>
+                <label class="item item-input">
+                    <input type="text" placeholder="Email" ng-model='inputData.email' required='true'>
+                </label>
+                <button class="button button-small button-block" type='submit'>Add</button>
+            </form>
+        </div>
+    </div>
 </ion-view>
