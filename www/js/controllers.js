@@ -1,8 +1,7 @@
 angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
 .controller('AppCtrl', function($scope, $state, $ionicModal, $firebase, $firebaseAuth, Utils) {
-    var ref = new Firebase("https://lovers-wish.firebaseio.com/");
-    var auth = $firebaseAuth(ref);
+    var auth = $firebaseAuth(Utils.refRoot());
 
     /* Create the login modal that we will use later */
     $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -21,11 +20,11 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             console.log("[AppCtrl] Authenticated user with uid:", authData.uid);
             $scope.authData = authData;
 
-            var list = $firebase(ref.child('users/' + authData.uid + '/public/besharedList')).$asArray();
+            var list = $firebase(Utils.refBeSharedList(authData.uid)).$asArray();
             list.$watch(function(event) {
                 if (event.event == 'child_added') {
                     var rec = list.$getRecord(event.key);
-                    $firebase(ref.child('users/' + rec.$value + '/share/displayName/')).$asObject().$loaded().then(function(dName) {
+                    $firebase(Utils.refDisplayName(rec.$value)).$asObject().$loaded().then(function(dName) {
                         rec.uid = rec.$value;
                         rec.displayName = dName.$value;
                     });
@@ -69,8 +68,8 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         } else { //sign up
             auth.$createUser($scope.loginData).then(function(userData) {
                 console.log("User " + userData.uid + " created successfully!");
-                $firebase(ref.child('sys/emailUidMap/' + Utils.emailToKey($scope.loginData.email))).$set(userData.uid);
-                $firebase(ref.child('users/' + userData.uid + '/share/displayName/')).$set($scope.loginData.displayName);
+                $firebase(Utils.refEmailUidMap().child(Utils.emailToKey($scope.loginData.email))).$set(userData.uid);
+                $firebase(Utils.refDisplayName(userData.uid)).$set($scope.loginData.displayName);
 
                 $scope.loginMode = true;
                 $scope.doLogin();
@@ -81,9 +80,8 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     }
 })
 
-.controller('WishlistCtrl', function($scope, $state, $stateParams, $firebase, $firebaseAuth) {
-    var ref = new Firebase("https://lovers-wish.firebaseio.com/");
-    $firebaseAuth(ref).$onAuth(function(authData) {
+.controller('WishlistCtrl', function($scope, $state, $stateParams, $firebase, $firebaseAuth, Utils) {
+    $firebaseAuth(Utils.refRoot()).$onAuth(function(authData) {
         if (!authData) {
             delete $scope.wishlist;
             return;
@@ -94,7 +92,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         $scope.editable = $stateParams.uid ? false : true;
         var uid = $stateParams.uid || authData.uid;
 
-        var wishlist = $firebase(ref.child('users/' + uid + '/share/wishlist/')).$asArray();
+        var wishlist = $firebase(Utils.refWishlist(uid)).$asArray();
         $scope.wishlist = wishlist;
 
         $scope.removeWish = function(wishId) {
@@ -108,18 +106,16 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 })
 
-.controller('WishCtrl', function($scope, $ionicHistory, $stateParams, $firebase, $firebaseAuth) {
+.controller('WishCtrl', function($scope, $ionicHistory, $stateParams, $firebase, $firebaseAuth, Utils) {
     $scope.wish = {};
 
-    var ref = new Firebase("https://lovers-wish.firebaseio.com/");
-    $firebaseAuth(ref).$onAuth(function(authData) {
+    $firebaseAuth(Utils.refRoot()).$onAuth(function(authData) {
         if (!authData) return;
 
         var editMode = $stateParams.wishId ? true : false;
 
         if (editMode) {
-            $scope.wish = $firebase(ref.child('users/' + authData.uid + '/share/wishlist/' + $stateParams.wishId))
-                .$asObject();
+            $scope.wish = $firebase(Utils.refWishlist(authData.uid).child($stateParams.wishId)).$asObject();
         }
 
         console.log("[WishCtrl] Authenticated user with uid:", authData.uid);
@@ -128,7 +124,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             if (editMode) {
                 $scope.wish.$save();
             } else { /* createMode */
-                var wishlist = $firebase(ref.child('users/' + authData.uid + '/share/wishlist/')).$asArray();
+                var wishlist = $firebase(Utils.refWishlist(authData.uid)).$asArray();
                 wishlist.$add($scope.wish);
             }
             $ionicHistory.goBack();
@@ -139,13 +135,12 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 .controller('ShareCtrl', function($scope, $ionicPopup, $firebase, $firebaseAuth, Utils) {
     $scope.inputData = {};
 
-    var ref = new Firebase("https://lovers-wish.firebaseio.com/");
-    $firebaseAuth(ref).$onAuth(function(authData) {
+    $firebaseAuth(Utils.refRoot()).$onAuth(function(authData) {
         if (!authData) return;
 
         console.log("[ShareCtrl] Authenticated user with uid:", authData.uid);
 
-        var shareList = $firebase(ref.child('users/' + authData.uid + '/private/shareList/')).$asArray();
+        var shareList = $firebase(Utils.refShareList(authData.uid)).$asArray();
         $scope.shareList = shareList;
 
         $scope.add = function() {
@@ -164,13 +159,13 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
             if (Utils.validateEmail(email)) {
                 var emailKey = Utils.emailToKey(email);
-                var uidObj = $firebase(ref.child('sys/emailUidMap/' + emailKey)).$asObject();
+                var uidObj = $firebase(Utils.refEmailUidMap().child(emailKey)).$asObject();
                 uidObj.$loaded().then(function() {
                     var uid = uidObj.$value;
                     if (uid) { /* Successful */
                         $scope.shareList.$add($scope.inputData);
 
-                        var list = $firebase(ref.child('users/' + uid + '/public/besharedList')).$asArray();
+                        var list = $firebase(Utils.refBeSharedList(uid)).$asArray();
                         list.$add(authData.uid);
 
                         /* clear */
@@ -200,10 +195,10 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             shareList.$remove(shareList.$indexFor(shareId));
 
             var emailKey = Utils.emailToKey(shareEmail);
-            $firebase(ref.child('sys/emailUidMap/' + emailKey)).$asObject().$loaded().then(function(uidObj) {
+            $firebase(Utils.refEmailUidMap().child(emailKey)).$asObject().$loaded().then(function(uidObj) {
                 var uid = uidObj.$value;
                 if (uid) {
-                    $firebase(ref.child('users/' + uid + '/public/besharedList')).$asArray().$loaded().then(function(list) {
+                    $firebase(Utils.refBeSharedList(uid)).$asArray().$loaded().then(function(list) {
                         for (var i = 0; i < list.length; ++i) {
                             if (list[i].$value == uid) {
                                 list.$remove(i);
