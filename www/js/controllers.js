@@ -200,7 +200,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                 if (uid) {
                     $firebase(Utils.refBeSharedList(uid)).$asArray().$loaded().then(function(list) {
                         for (var i = 0; i < list.length; ++i) {
-                            if (list[i].$value == uid) {
+                            if (list[i].$value == authData.uid) {
                                 list.$remove(i);
                                 break;
                             }
