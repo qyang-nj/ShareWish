@@ -99,6 +99,10 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             var wishlist = $scope.wishlist;
             wishlist.$remove(wishlist.$indexFor(wishId));
         };
+
+        $scope.clickUrl = function(url) {
+            window.open(url, '_system');
+        }
     });
 
     $scope.addWish = function() {
@@ -121,6 +125,13 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         console.log("[WishCtrl] Authenticated user with uid:", authData.uid);
 
         $scope.saveWish = function() {
+            var url = $scope.wish.url;
+            if (url) {
+                if (!Utils.validateUrl(url)) {
+                    $scope.wish.url = 'http://' + url;
+                }
+            }
+
             if (editMode) {
                 $scope.wish.$save();
             } else { /* createMode */

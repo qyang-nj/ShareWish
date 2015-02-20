@@ -35,9 +35,14 @@ angular.module('app.services', ['ngCordova'])
         return emailAddress.replace(/\./g, ',');
     };
 
-    Utils.validateEmail = function validateEmail(email) {
+    Utils.validateEmail = function(email) {
         var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(email);
+    };
+
+    Utils.validateUrl = function(url) {
+        var re = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+        return re.test(url);
     };
 
     Utils.toastLong = function(message) {
