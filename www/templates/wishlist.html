@@ -5,18 +5,16 @@
     </ion-nav-buttons>
     <ion-content>
         <div class="card" ng-repeat="wish in wishlist">
-            <div class="item item-divider">
+            <div class="item item-divider" style="height:40px;">
                 <h2 style="position:absolute;"><b>{{wish.name}}</b></h2>
-                <div style="position:absolute;right:0px;margin-top:-4px">
-                    <a class="button button-small button-icon icon ion-ios-compose-outline" href="#/app/wish?wishId={{wish.$id}}" ng-show='editable'></a>
-                    <a class="button button-small button-icon icon ion-ios-close-empty" ng-click='removeWish(wish.$id)' ng-show='editable'></a>
+                                <div style="position:absolute;right:0px;">
+                    <a class="button button-small button-icon icon ion-ios-paperplane" ng-click="window.open({{wish.url}}, '_system')" ng-show="wish.url"></a>
+                    <a class="button button-small button-icon icon ion-ios-compose" ng-href="#/app/wish?wishId={{wish.$id}}" ng-show='editable'></a>
+                    <a class="button button-small button-icon icon ion-ios-trash" ng-click='removeWish(wish.$id)' ng-show='editable'></a>
                 </div>
             </div>
             <div class="item item-text-wrap">
-                {{wish.detail}}
-            </div>
-            <div class="item item-divider" ng-if="wish.url">
-                <a href='{{wish.url}}'>{{wish.url}}</a>
+                <p>{{wish.detail}}</p>
             </div>
         </div>
     </ion-content>

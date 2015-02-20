@@ -15,6 +15,7 @@
     "shelljs": "^0.3.0"
   },
   "cordovaPlugins": [
-    "nl.x-services.plugins.toast"
+    "nl.x-services.plugins.toast",
+    "org.apache.cordova.inappbrowser"
   ]
 }
