@@ -56,6 +56,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
                     controller: 'ShareCtrl'
                 }
             }
+        })
+        .state('app.account', {
+            url: "/account",
+            views: {
+                'content': {
+                    templateUrl: "templates/account.html",
+                    controller: 'AccountCtrl'
+                }
+            }
         });
 
     // if none of the above states are matched, use this as the fallback

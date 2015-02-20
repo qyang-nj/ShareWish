@@ -221,4 +221,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             });
         };
     });
+})
+
+.controller('AccountCtrl', function($scope, $firebase, $firebaseAuth, Utils) {
 });
