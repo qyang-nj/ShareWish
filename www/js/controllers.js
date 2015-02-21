@@ -106,7 +106,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 })
 
-.controller('WishCtrl', function($scope, $ionicHistory, $stateParams, $firebase, $firebaseAuth, Utils) {
+.controller('WishCtrl', function($scope, $ionicHistory, $stateParams, $firebase, $firebaseAuth, Utils, Camera) {
     $scope.wish = {};
 
     $firebaseAuth(Utils.refRoot()).$onAuth(function(authData) {
@@ -135,6 +135,14 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                 wishlist.$add($scope.wish);
             }
             $ionicHistory.goBack();
+        };
+
+        $scope.insertPic = function() {
+            Camera.getPicture().then(function(imageURI) {
+                console.log(imageURI);
+            }, function(err) {
+                console.err(err);
+            });
         };
     });
 })

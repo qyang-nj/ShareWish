@@ -16,6 +16,7 @@
   },
   "cordovaPlugins": [
     "nl.x-services.plugins.toast",
-    "org.apache.cordova.inappbrowser"
+    "org.apache.cordova.inappbrowser",
+    "org.apache.cordova.camera"
   ]
 }

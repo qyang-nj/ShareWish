@@ -17,5 +17,14 @@
             <span class="input-label">Detail</span>
             <textarea ng-model="wish.detail"></textarea>
         </label>
+        <div class="item item-divider">
+            <h2>PHOTOS</h2>
+        </div>
+
+        <button class="button photo" ng-repeat='i in [1, 2, 3, 4]'>
+            <img src="img/ionic.png"></img>
+        </button>
+        <button class="button icon ion-ios-camera photo" style="margin-left:0;" ng-click='insertPic()'></button>
+
     </ion-content>
 </ion-view>

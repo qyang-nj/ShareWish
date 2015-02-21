@@ -1,17 +1,20 @@
 /* Empty. Add your own CSS if you like */
 
 .item-divider-button {
-	height: 40px;
+    height: 40px;
 }
-
 .item-divider-button h2 {
-	position:absolute;
-	font-weight: bold;
-	vertical-align: middle;
+    position: absolute;
+    font-weight: bold;
+    vertical-align: middle;
 }
-
 .item-divider-button button {
     position: absolute;
     right: 10px;
     margin-top: -4px;
+}
+.photo {
+    height: 120px;
+    width: 120px;
+    margin: 4px 0 0 4px;
 }
