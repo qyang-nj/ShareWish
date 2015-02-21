@@ -73,7 +73,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                 Utils.toastLong(error.message);
             });
         }
-    }
+    };
 })
 
 .controller('WishlistCtrl', function($scope, $state, $stateParams, $firebase, $firebaseAuth, Utils) {
@@ -98,7 +98,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
         $scope.clickUrl = function(url) {
             window.open(url, '_system');
-        }
+        };
     });
 
     $scope.addWish = function() {
@@ -195,7 +195,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             } else { /* invalid email address */
                 Utils.toastLong('Please input a valid email address.');
             }
-        }
+        };
 
         $scope.del = function(shareId, shareEmail) {
             var shareList = $scope.shareList;
@@ -235,7 +235,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         });
 
         $scope.saveProfile = function() {
-            var profile = JSON.parse(JSON.stringify($scope.profile));; /* copy object */
+            var profile = JSON.parse(JSON.stringify($scope.profile)); /* copy object */
             profile.birthday = $scope.profile.birthday.getTime();
             $firebase(Utils.refProfile(authData.uid)).$set(profile);
         };
@@ -250,6 +250,6 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                     $ionicHistory.goBack();
                 }
             });
-        }
+        };
     });
 });

@@ -45,7 +45,7 @@ angular.module('app.services', ['ngCordova'])
     };
 
     Utils.validateUrl = function(url) {
-        var re = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+        var re = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
         return re.test(url);
     };
 
