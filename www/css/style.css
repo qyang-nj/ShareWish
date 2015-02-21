@@ -13,8 +13,14 @@
     right: 10px;
     margin-top: -4px;
 }
+.album {
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto;
+    text-align: center;
+}
 .photo {
-    height: 120px;
-    width: 120px;
-    margin: 4px 0 0 4px;
+    float: left;
+    margin: 4px 0 0 10px;
+    display: inline-block;
 }

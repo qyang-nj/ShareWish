@@ -21,10 +21,17 @@
             <h2>PHOTOS</h2>
         </div>
 
-        <button class="button photo" ng-repeat='i in [1, 2, 3, 4]'>
-            <img src="img/ionic.png"></img>
-        </button>
-        <button class="button icon ion-ios-camera photo" style="margin-left:0;" ng-click='insertPic()'></button>
+        <div class="album">
+            <div class="photo" ng-repeat='i in [1, 2, 3]'>
+                <button style="padding:0;">
+                    <img src="img/ionic.png" width="136" height="136"></img>
+                </button>
+            </div>
+            <div class="photo">
+                <button class="button icon ion-ios-camera" style="width:68px" ng-click='insertPic()'></button>
+                <button class="button icon ion-ios-albums" style="width:68px" ng-click='insertPic()'></button>
+            </div>
+        </div>
 
     </ion-content>
 </ion-view>
