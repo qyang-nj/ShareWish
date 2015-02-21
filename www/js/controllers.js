@@ -42,10 +42,6 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         $scope.modal.show();
     };
 
-    $scope.logout = function() {
-        auth.$unauth();
-    }
-
     // Triggered in the login modal to close it
     $scope.closeLogin = function() {
         $scope.modal.hide();
@@ -223,5 +219,37 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     });
 })
 
-.controller('AccountCtrl', function($scope, $firebase, $firebaseAuth, Utils) {
+.controller('AccountCtrl', function($scope, $ionicHistory, $ionicPopup, $firebase, $firebaseAuth, Utils) {
+    $scope.profile = {};
+
+    var auth = $firebaseAuth(Utils.refRoot());
+    auth.$onAuth(function(authData) {
+        if (!authData) return;
+
+        $scope.profile.email = authData.password.email;
+        $firebase(Utils.refProfile(authData.uid)).$asObject().$loaded().then(function(obj) {
+            var profile = {};
+            $scope.profile.name = obj.name || '';
+            $scope.profile.gender = obj.gender || 'Male';
+            $scope.profile.birthday = new Date(obj.birthday || 631170000000); /* 1/1/1990 is default */
+        });
+
+        $scope.saveProfile = function() {
+            var profile = JSON.parse(JSON.stringify($scope.profile));; /* copy object */
+            profile.birthday = $scope.profile.birthday.getTime();
+            $firebase(Utils.refProfile(authData.uid)).$set(profile);
+        };
+
+        $scope.logout = function() {
+            $ionicPopup.confirm({
+                title: 'Logout?',
+                template: 'Are you going to logout?'
+            }).then(function(res) {
+                if (res) {
+                    auth.$unauth();
+                    $ionicHistory.goBack();
+                }
+            });
+        }
+    });
 });
