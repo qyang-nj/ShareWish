@@ -74,9 +74,8 @@ angular.module('app.services', ['ngCordova'])
 })
 
 .factory('Camera', ['$q', function($q) {
-
     return {
-        getPicture: function(options) {
+        getPicture: function(camera) {
             var q = $q.defer();
 
             navigator.camera.getPicture(function(result) {
@@ -84,7 +83,17 @@ angular.module('app.services', ['ngCordova'])
                 q.resolve(result);
             }, function(err) {
                 q.reject(err);
-            }, options);
+            }, {
+                quality: 75,
+                destinationType: Camera.DestinationType.DATA_URL,
+                sourceType: camera ? Camera.PictureSourceType.CAMERA : Camera.PictureSourceType.PHOTOLIBRARY,
+                allowEdit: true,
+                encodingType: Camera.EncodingType.JPEG,
+                targetWidth: 1000,
+                targetHeight: 1000,
+                correctOrientation: true,
+                saveToPhotoAlbum: false
+            });
 
             return q.promise;
         }

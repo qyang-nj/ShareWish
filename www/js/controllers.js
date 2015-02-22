@@ -126,7 +126,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                 $ionicLoading.show({
                     template: 'Loading...'
                 });
-                $scope.pictures = $firebase(Utils.refWishPictures(uid, $stateParams.wishId)).$asArray()
+                $scope.pictures = $firebase(Utils.refWishPictures(uid, $stateParams.wishId)).$asArray();
                 $scope.pictures.$loaded().then(function() {
                     $ionicLoading.hide();
                 });
@@ -160,11 +160,11 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             $ionicHistory.goBack();
         };
 
-        $scope.insertPic = function() {
-            Camera.getPicture().then(function(imageURI) {
-                console.log(imageURI);
+        $scope.insertPic = function(camera) {
+            Camera.getPicture(camera).then(function(imageURI) {
+                $scope.newPics.push('data:image/jpeg;base64,' + imageURI);
             }, function(err) {
-                console.err(err);
+                Utils.toastLong(err);
             });
         };
 
