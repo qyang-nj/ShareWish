@@ -167,21 +167,6 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                 Utils.toastLong(err);
             });
         };
-
-        $scope.uploadFile = function() {
-            console.log('clicked');
-            var file = $scope.wish.imageFile;
-
-            var reader = new FileReader();
-            reader.onload = function(readerEvt) {
-                var binaryString = readerEvt.target.result;
-                //console.log(btoa(binaryString));
-                $scope.newPics.push('data:image/png;base64,' + btoa(binaryString));
-                delete $scope.wish.imageFile;
-            };
-
-            reader.readAsBinaryString(file);
-        };
     });
 })
 
@@ -298,20 +283,4 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             });
         };
     });
-})
-
-.directive('fileModel', ['$parse', function($parse) {
-    return {
-        restrict: 'A',
-        link: function(scope, element, attrs) {
-            var model = $parse(attrs.fileModel);
-            var modelSetter = model.assign;
-
-            element.bind('change', function() {
-                scope.$apply(function() {
-                    modelSetter(scope, element[0].files[0]);
-                });
-            });
-        }
-    };
-}]);
+});

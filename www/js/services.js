@@ -87,7 +87,7 @@ angular.module('app.services', ['ngCordova'])
                 quality: 75,
                 destinationType: Camera.DestinationType.DATA_URL,
                 sourceType: camera ? Camera.PictureSourceType.CAMERA : Camera.PictureSourceType.PHOTOLIBRARY,
-                allowEdit: true,
+                allowEdit: false,
                 encodingType: Camera.EncodingType.JPEG,
                 targetWidth: 1000,
                 targetHeight: 1000,

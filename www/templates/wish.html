@@ -17,8 +17,10 @@
             <span class="input-label">Detail</span>
             <textarea ng-model="wish.detail"></textarea>
         </label>
-        <div class="item item-divider">
-            <h2>PHOTOS</h2>
+        <div class="item item-divider item-divider-button">
+            <h2>PICTURES</h2>
+            <button class="button button-small icon ion-ios-camera" ng-click='insertPic(true)'></button>
+            <button class="button button-small icon ion-ios-albums" ng-click='insertPic(false)'></button>
         </div>
 
         <div class="album">
@@ -32,13 +34,6 @@
                     <img ng-src="{{p}} " width="136" height="136"></img>
                 </button>
             </div>
-            <div class="photo">
-                <button class="button icon ion-ios-camera" style="width:68px" ng-click='insertPic(true)'></button>
-                <button class="button icon ion-ios-albums" style="width:68px" ng-click='insertPic(false)'></button>
-            </div>
         </div>
-
-        <input type="file" file-model="wish.imageFile" />
-        <button ng-click="uploadFile()">upload me</button>
     </ion-content>
 </ion-view>

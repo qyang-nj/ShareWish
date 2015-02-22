@@ -9,9 +9,11 @@
     vertical-align: middle;
 }
 .item-divider-button button {
-    position: absolute;
-    right: 10px;
+    /*position: absolute;*/
+    /*right: 4px;*/
     margin-top: -4px;
+    margin-left: 4px;
+    float: right;
 }
 .album {
     margin-left: auto;
