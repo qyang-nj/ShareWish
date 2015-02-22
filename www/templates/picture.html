@@ -1,0 +1,9 @@
+<ion-view title="{{wish.name}}">
+    <ion-content>
+        <ul class="list">
+            <li class="item" ng-repeat="p in pictures">
+                <img ng-src='{{p.$value}}' style="max-width: 100%;"/>
+            </li>
+        </ul>
+    </ion-content>
+</ion-view>

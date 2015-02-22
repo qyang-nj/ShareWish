@@ -124,7 +124,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             $timeout(function() {
                 /* Downloading pictures takes a while, so delay to avoid interfering UI. */
                 $scope.pictures = $firebase(Utils.refWishPictures(uid, $stateParams.wishId)).$asArray();
-            }, 500);
+            }, 200);
         }
 
         $scope.saveWish = function() {
@@ -135,10 +135,12 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                 }
             }
 
+            $scope.wish.hasPicture = ($scope.newPics.length > 0 || ($scope.pictures !== null && $scope.pictures.length > 0));
+
             if (editMode) {
                 $scope.wish.$save();
                 $scope.newPics.forEach(function(entry) {
-                    $scope.wish.pictures.$add(entry);
+                    $scope.pictures.$add(entry);
                 });
             } else { /* createMode */
                 var wishlist = $firebase(Utils.refWishlist(uid)).$asArray();

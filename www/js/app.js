@@ -65,6 +65,15 @@ angular.module('starter', ['ionic', 'starter.controllers'])
                     controller: 'AccountCtrl'
                 }
             }
+        })
+        .state('app.pictures', {
+            url: "/picture?wishId",
+            views: {
+                'content': {
+                    templateUrl: "templates/picture.html",
+                    controller: 'WishCtrl'
+                }
+            }
         });
 
     // if none of the above states are matched, use this as the fallback
