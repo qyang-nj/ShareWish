@@ -2,4 +2,5 @@
 /users/{uid}/private/shareList/[emails]
             /public/besharedList/[uids]
             /share/wishlist/[wishs]
+            	  /pictures/{wishId}/[images]
                   /displayName

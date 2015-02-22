@@ -94,6 +94,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         $scope.removeWish = function(wishId) {
             var wishlist = $scope.wishlist;
             wishlist.$remove(wishlist.$indexFor(wishId));
+            $firebase(Utils.refWishPictures(uid, wishId)).$asObject().$remove();
         };
 
         $scope.clickUrl = function(url) {
@@ -106,19 +107,25 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 })
 
-.controller('WishCtrl', function($scope, $ionicHistory, $stateParams, $firebase, $firebaseAuth, Utils, Camera) {
-    $scope.wish = {};
-
+.controller('WishCtrl', function($scope, $stateParams, $timeout, $ionicHistory, $firebase, $firebaseAuth, Utils, Camera) {
     $firebaseAuth(Utils.refRoot()).$onAuth(function(authData) {
         if (!authData) return;
 
+        var uid = authData.uid;
         var editMode = $stateParams.wishId ? true : false;
 
-        if (editMode) {
-            $scope.wish = $firebase(Utils.refWishlist(authData.uid).child($stateParams.wishId)).$asObject();
-        }
+        console.log("[WishCtrl] uid:", uid, " editMode:", editMode);
 
-        console.log("[WishCtrl] Authenticated user with uid:", authData.uid);
+        $scope.wish = {};
+        $scope.newPics = [];
+
+        if (editMode) {
+            $scope.wish = $firebase(Utils.refWishlist(uid).child($stateParams.wishId)).$asObject();
+            $timeout(function() {
+                /* Downloading pictures takes a while, so delay to avoid interfering UI. */
+                $scope.pictures = $firebase(Utils.refWishPictures(uid, $stateParams.wishId)).$asArray();
+            }, 500);
+        }
 
         $scope.saveWish = function() {
             var url = $scope.wish.url;
@@ -130,10 +137,18 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
             if (editMode) {
                 $scope.wish.$save();
+                $scope.newPics.forEach(function(entry) {
+                    $scope.wish.pictures.$add(entry);
+                });
             } else { /* createMode */
-                var wishlist = $firebase(Utils.refWishlist(authData.uid)).$asArray();
-                wishlist.$add($scope.wish);
+                var wishlist = $firebase(Utils.refWishlist(uid)).$asArray();
+                wishlist.$add($scope.wish).then(function(ref) {
+                    $scope.newPics.forEach(function(entry) {
+                        $firebase(Utils.refWishPictures(uid, ref.key())).$asArray().$add(entry);
+                    });
+                });
             }
+
             $ionicHistory.goBack();
         };
 
@@ -143,6 +158,21 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             }, function(err) {
                 console.err(err);
             });
+        };
+
+        $scope.uploadFile = function() {
+            console.log('clicked');
+            var file = $scope.wish.imageFile;
+
+            var reader = new FileReader();
+            reader.onload = function(readerEvt) {
+                var binaryString = readerEvt.target.result;
+                //console.log(btoa(binaryString));
+                $scope.newPics.push('data:image/png;base64,' + btoa(binaryString));
+                delete $scope.wish.imageFile;
+            };
+
+            reader.readAsBinaryString(file);
         };
     });
 })
@@ -260,4 +290,20 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             });
         };
     });
-});
+})
+
+.directive('fileModel', ['$parse', function($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+
+            element.bind('change', function() {
+                scope.$apply(function() {
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
+}]);

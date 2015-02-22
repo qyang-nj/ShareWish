@@ -18,6 +18,10 @@ angular.module('app.services', ['ngCordova'])
         return refRoot.child('users/' + uid + '/share/wishlist');
     };
 
+    Utils.refWishPictures = function(uid, wishId) {
+        return refRoot.child('users/' + uid + '/share/pictures/' + wishId);
+    };
+
     Utils.refShareList = function(uid) {
         return refRoot.child('users/' + uid + '/private/shareList');
     };

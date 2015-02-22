@@ -22,9 +22,14 @@
         </div>
 
         <div class="album">
-            <div class="photo" ng-repeat='i in [1, 2, 3]'>
+            <div class="photo" ng-repeat='p in pictures'>
                 <button style="padding:0;">
-                    <img src="img/ionic.png" width="136" height="136"></img>
+                    <img ng-src="{{p.$value}} " width="136" height="136"></img>
+                </button>
+            </div>
+            <div class="photo" ng-repeat='p in newPics'>
+                <button style="padding:0;">
+                    <img ng-src="{{p}} " width="136" height="136"></img>
                 </button>
             </div>
             <div class="photo">
@@ -33,5 +38,7 @@
             </div>
         </div>
 
+        <input type="file" file-model="wish.imageFile" />
+        <button ng-click="uploadFile()">upload me</button>
     </ion-content>
 </ion-view>
