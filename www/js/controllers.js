@@ -107,7 +107,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 })
 
-.controller('WishCtrl', function($scope, $stateParams, $timeout, $ionicHistory, $firebase, $firebaseAuth, Utils, Camera) {
+.controller('WishCtrl', function($scope, $stateParams, $timeout, $ionicHistory, $ionicLoading, $firebase, $firebaseAuth, Utils, Camera) {
     $firebaseAuth(Utils.refRoot()).$onAuth(function(authData) {
         if (!authData) return;
 
@@ -123,8 +123,14 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             $scope.wish = $firebase(Utils.refWishlist(uid).child($stateParams.wishId)).$asObject();
             $timeout(function() {
                 /* Downloading pictures takes a while, so delay to avoid interfering UI. */
-                $scope.pictures = $firebase(Utils.refWishPictures(uid, $stateParams.wishId)).$asArray();
-            }, 200);
+                $ionicLoading.show({
+                    template: 'Loading...'
+                });
+                $scope.pictures = $firebase(Utils.refWishPictures(uid, $stateParams.wishId)).$asArray()
+                $scope.pictures.$loaded().then(function() {
+                    $ionicLoading.hide();
+                });
+            }, 400);
         }
 
         $scope.saveWish = function() {
