@@ -3,41 +3,6 @@ angular.module('app.services', ['ngCordova'])
 .factory('Utils', function($cordovaToast) {
     var Utils = {};
 
-    var BASE_URL = "https://lovers-wish.firebaseio.com/";
-    var refRoot = new Firebase(BASE_URL);
-
-    Utils.refRoot = function() {
-        return refRoot;
-    };
-
-    Utils.refEmailUidMap = function() {
-        return refRoot.child('sys/emailUidMap/');
-    };
-
-    Utils.refWishlist = function(uid) {
-        return refRoot.child('users/' + uid + '/share/wishlist');
-    };
-
-    Utils.refWishPictures = function(uid, wishId) {
-        return refRoot.child('users/' + uid + '/share/pictures/' + wishId);
-    };
-
-    Utils.refShareList = function(uid) {
-        return refRoot.child('users/' + uid + '/private/shareList');
-    };
-
-    Utils.refBeSharedList = function(uid) {
-        return refRoot.child('users/' + uid + '/public/besharedList');
-    };
-
-    Utils.refDisplayName = function(uid) {
-        return refRoot.child('users/' + uid + '/share/displayName/');
-    };
-
-    Utils.refProfile = function(uid) {
-        return refRoot.child('users/' + uid + '/private/profile/');
-    };
-
     /* Firebase keys cannot have a period (.) in them, so this converts the emails to valid keys */
     Utils.emailToKey = function(emailAddress) {
         return emailAddress.replace(/\./g, ',');
@@ -71,6 +36,46 @@ angular.module('app.services', ['ngCordova'])
     };
 
     return Utils;
+})
+
+.factory('Ref', function() {
+    var Ref = {};
+
+    var refRoot = new Firebase("https://lovers-wish.firebaseio.com/");
+
+    Ref.root = function() {
+        return refRoot;
+    };
+
+    Ref.emailUidMap = function() {
+        return refRoot.child('sys/emailUidMap/');
+    };
+
+    Ref.wishlist = function(uid) {
+        return refRoot.child('users/' + uid + '/share/wishlist');
+    };
+
+    Ref.wishPictures = function(uid, wishId) {
+        return refRoot.child('users/' + uid + '/share/pictures/' + wishId);
+    };
+
+    Ref.shareList = function(uid) {
+        return refRoot.child('users/' + uid + '/private/shareList');
+    };
+
+    Ref.beSharedList = function(uid) {
+        return refRoot.child('users/' + uid + '/public/besharedList');
+    };
+
+    Ref.displayName = function(uid) {
+        return refRoot.child('users/' + uid + '/share/displayName/');
+    };
+
+    Ref.profile = function(uid) {
+        return refRoot.child('users/' + uid + '/private/profile/');
+    };
+
+    return Ref;
 })
 
 .factory('Camera', ['$q', function($q) {

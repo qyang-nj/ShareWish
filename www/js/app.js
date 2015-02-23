@@ -1,13 +1,12 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers'])
 
+.factory("Auth", ["$firebaseAuth", function($firebaseAuth) {
+    var ref = new Firebase("https://lovers-wish.firebaseio.com/");
+    return $firebaseAuth(ref);
+}])
+
 .run(function($ionicPlatform) {
-    console.log('Platform: ', ionic.Platform.platform() );
+    console.log('Platform: ', ionic.Platform.platform());
 
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -35,7 +34,12 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             views: {
                 'content': {
                     templateUrl: "templates/wishlist.html",
-                    controller: 'WishlistCtrl'
+                    controller: 'WishlistCtrl',
+                    resolve: {
+                        authData: ["Auth", function(Auth) {
+                            return Auth.$waitForAuth();
+                        }]
+                    }
                 }
             }
         })
@@ -44,7 +48,12 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             views: {
                 'content': {
                     templateUrl: "templates/wish.html",
-                    controller: 'WishCtrl'
+                    controller: 'WishCtrl',
+                    resolve: {
+                        authData: ["Auth", function(Auth) {
+                            return Auth.$requireAuth();
+                        }]
+                    }
                 }
             }
         })
@@ -53,7 +62,12 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             views: {
                 'content': {
                     templateUrl: "templates/share.html",
-                    controller: 'ShareCtrl'
+                    controller: 'ShareCtrl',
+                    resolve: {
+                        authData: ["Auth", function(Auth) {
+                            return Auth.$requireAuth();
+                        }]
+                    }
                 }
             }
         })
@@ -62,7 +76,12 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             views: {
                 'content': {
                     templateUrl: "templates/account.html",
-                    controller: 'AccountCtrl'
+                    controller: 'AccountCtrl',
+                    resolve: {
+                        authData: ["Auth", function(Auth) {
+                            return Auth.$requireAuth();
+                        }]
+                    }
                 }
             }
         })
@@ -71,7 +90,12 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             views: {
                 'content': {
                     templateUrl: "templates/picture.html",
-                    controller: 'WishCtrl'
+                    controller: 'WishCtrl',
+                    resolve: {
+                        authData: ["Auth", function(Auth) {
+                            return Auth.$requireAuth();
+                        }]
+                    }
                 }
             }
         });
