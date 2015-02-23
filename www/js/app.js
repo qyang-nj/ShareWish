@@ -86,7 +86,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
             }
         })
         .state('app.pictures', {
-            url: "/picture?wishId",
+            url: "/picture/:wishId",
             views: {
                 'content': {
                     templateUrl: "templates/picture.html",

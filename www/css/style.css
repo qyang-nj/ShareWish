@@ -25,4 +25,12 @@
     float: left;
     margin: 4px 0 0 10px;
     display: inline-block;
+    position: relative;
+}
+
+.photo button {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    opacity: 0.8;
 }

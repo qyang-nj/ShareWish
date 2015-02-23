@@ -25,14 +25,12 @@
 
         <div class="album">
             <div class="photo" ng-repeat='p in pictures'>
-                <button style="padding:0;">
-                    <img ng-src="{{p.$value}} " style="width:136px; hegiht: auto;"></img>
-                </button>
+                <img ng-src="{{p.$value}} " width="136" height="136"></img><br/>
+                <button class="button button-small icon ion-close-round"></button>
             </div>
             <div class="photo" ng-repeat='p in newPics'>
-                <button style="padding:0;">
-                    <img ng-src="{{p}} " width="136" height="136"></img>
-                </button>
+                <img ng-src="{{p}} " width="136" height="136"></img>
+                <button class="button button-small icon ion-close-round"></button>
             </div>
         </div>
     </ion-content>
