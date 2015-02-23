@@ -82,7 +82,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 })
 
-.controller('WishlistCtrl', function($scope, $state, $stateParams, $firebase, $firebaseAuth, authData, Utils, Ref) {
+.controller('WishlistCtrl', function($scope, $state, $stateParams, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref) {
     if (authData == null) return;
 
     $scope.editable = ($stateParams.uid == null);
@@ -92,9 +92,16 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     $scope.wishlist = $firebase(Ref.wishlist(uid)).$asArray();
 
     $scope.removeWish = function(wishId) {
-        var wishlist = $scope.wishlist;
-        wishlist.$remove(wishlist.$indexFor(wishId));
-        $firebase(Ref.wishPictures(uid, wishId)).$asObject().$remove();
+        $ionicPopup.confirm({
+            title: 'Delete?',
+            template: 'Your wish will be removed from you wishlist.'
+        }).then(function(res) {
+            if (res) {
+                var wishlist = $scope.wishlist;
+                wishlist.$remove(wishlist.$indexFor(wishId));
+                $firebase(Ref.wishPictures(uid, wishId)).$asObject().$remove();
+            }
+        });
     };
 
     $scope.clickUrl = function(url) {
