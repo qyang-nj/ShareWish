@@ -153,6 +153,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         //$scope.wish.hasPicture = ($scope.newPics.length > 0 || ($scope.pictures !== null && $scope.pictures.length > 0));
 
         if (editMode) {
+            $scope.wish.hasPicture = false;
             pics.forEach(function(p) {
                 if ('$id' in p) { /* existing picture */
                     if (p.deleted) {
@@ -169,6 +170,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             });
             $scope.wish.$save();
         } else { /* createMode */
+            $scope.wish.hasPicture = false;
             var wishlist = $firebase(Ref.wishlist(uid)).$asArray();
             wishlist.$add($scope.wish).then(function(wish) {
                 pics.forEach(function(p) {
