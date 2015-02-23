@@ -78,6 +78,10 @@ angular.module('app.services', ['ngCordova'])
     return Ref;
 })
 
+.factory("Auth", ["$firebaseAuth", "Ref", function($firebaseAuth, Ref) {
+    return $firebaseAuth(Ref.root());
+}])
+
 .factory('Camera', ['$q', function($q) {
     return {
         getPicture: function(camera) {

@@ -1,9 +1,4 @@
-angular.module('starter', ['ionic', 'starter.controllers'])
-
-.factory("Auth", ["$firebaseAuth", function($firebaseAuth) {
-    var ref = new Firebase("https://lovers-wish.firebaseio.com/");
-    return $firebaseAuth(ref);
-}])
+angular.module('starter', ['ionic', 'starter.controllers', 'app.services'])
 
 .run(function($ionicPlatform) {
     console.log('Platform: ', ionic.Platform.platform());

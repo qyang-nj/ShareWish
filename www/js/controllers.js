@@ -1,7 +1,7 @@
 angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
-.controller('AppCtrl', function($scope, $state, $ionicModal, $firebase, $firebaseAuth, Utils, Ref) {
-    var auth = $firebaseAuth(Ref.root());
+.controller('AppCtrl', function($scope, $state, $ionicModal, $ionicHistory, $firebase, $firebaseAuth, Utils, Ref, Auth) {
+    // var auth = $firebaseAuth(Ref.root());
 
     /* Create the login modal that we will use later */
     $ionicModal.fromTemplateUrl('templates/login.html', {
@@ -10,7 +10,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     }).then(function(modal) {
         $scope.modal = modal;
 
-        auth.$onAuth(function(authData) {
+        Auth.$onAuth(function(authData) {
             if (!authData) {
                 delete $scope.authData;
                 $scope.login();
@@ -55,14 +55,20 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     // Perform the login action when the user submits the login form
     $scope.doLogin = function() {
         if ($scope.loginMode) { /* Login */
-            auth.$authWithPassword($scope.loginData).then(function(authData) {
-                console.log("Authenticated successfully with payload:", authData);
+            Auth.$authWithPassword($scope.loginData).then(function(authData) {
+                $ionicHistory.clearCache();
+                $ionicHistory.nextViewOptions({
+                    disableAnimate: true,
+                    disableBack: true,
+                    historyRoot: true
+                });
+                $state.go("app.wishlist");
                 $scope.closeLogin();
             }).catch(function(error) {
                 Utils.toastLong(error.message);
             });
         } else { //sign up
-            auth.$createUser($scope.loginData).then(function(userData) {
+            Auth.$createUser($scope.loginData).then(function(userData) {
                 console.log("User " + userData.uid + " created successfully!");
                 $firebase(ref.emailUidMap().child(Utils.emailToKey($scope.loginData.email))).$set(userData.uid);
                 $firebase(ref.displayName(userData.uid)).$set($scope.loginData.displayName);
@@ -160,10 +166,12 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                 pics.forEach(function(p) {
                     if (!p.deleted) {
                         $firebase(Ref.wishPictures(uid, wish.key())).$asArray().$add(p);
-                        wish.update({hasPicture: true});
+                        wish.update({
+                            hasPicture: true
+                        });
                     }
                 });
-                
+
             });
         }
 
@@ -260,10 +268,10 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 })
 
-.controller('AccountCtrl', function($scope, $ionicHistory, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref) {
+.controller('AccountCtrl', function($scope, $state, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref, Auth) {
+    $scope.title = authData.password.email;
     $scope.profile = {};
 
-    $scope.profile.email = authData.password.email;
     $firebase(Ref.profile(authData.uid)).$asObject().$loaded().then(function(obj) {
         var profile = {};
         $scope.profile.name = obj.name || '';
@@ -274,7 +282,9 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     $scope.saveProfile = function() {
         var profile = JSON.parse(JSON.stringify($scope.profile)); /* copy object */
         profile.birthday = $scope.profile.birthday.getTime();
-        $firebase(Ref.profile(authData.uid)).$set(profile);
+        $firebase(Ref.profile(authData.uid)).$set(profile).then(function() {
+            Utils.toastLong('Profile saved');
+        });
     };
 
     $scope.logout = function() {
@@ -283,8 +293,8 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             template: 'Are you going to logout?'
         }).then(function(res) {
             if (res) {
-                $firebaseAuth(Ref.root()).$unauth();
-                $ionicHistory.goBack();
+                Auth.$unauth();
+                $state.reload();
             }
         });
     };
