@@ -104,17 +104,25 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     var editMode = $stateParams.wishId ? true : false; /* edit or create */
 
     $scope.wish = {};
-    $scope.newPics = [];
+    $scope.pics = [];
 
-    if (editMode) {
+    var pics = $scope.pics;
+    var savedPics = null;
+
+    if (editMode) { /* if edit mode, read existing data. */
         $scope.wish = $firebase(Ref.wishlist(uid).child($stateParams.wishId)).$asObject();
         $timeout(function() {
             /* Downloading pictures takes a while, so delay to avoid interfering UI. */
             $ionicLoading.show({
                 template: 'Loading...'
             });
-            $scope.pictures = $firebase(Ref.wishPictures(uid, $stateParams.wishId)).$asArray();
-            $scope.pictures.$loaded().then(function() {
+
+            savedPics = $firebase(Ref.wishPictures(uid, $stateParams.wishId)).$asArray();
+            savedPics.$loaded().then(function() {
+                for (var i = 0; i < savedPics.length; ++i) {
+                    pics.push(savedPics[i]);
+                }
+
                 $ionicLoading.hide();
             });
         }, 400);
@@ -128,31 +136,53 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             }
         }
 
-        $scope.wish.hasPicture = ($scope.newPics.length > 0 || ($scope.pictures !== null && $scope.pictures.length > 0));
+        //$scope.wish.hasPicture = ($scope.newPics.length > 0 || ($scope.pictures !== null && $scope.pictures.length > 0));
 
         if (editMode) {
-            $scope.wish.$save();
-            $scope.newPics.forEach(function(entry) {
-                $scope.pictures.$add(entry);
+            pics.forEach(function(p) {
+                if ('$id' in p) { /* existing picture */
+                    if (p.deleted) {
+                        savedPics.$remove(savedPics.$indexFor(p.$id));
+                    } else {
+                        $scope.wish.hasPicture = true;
+                    }
+                } else { /* new picture */
+                    if (!p.deleted) {
+                        savedPics.$add(p);
+                        $scope.wish.hasPicture = true;
+                    }
+                }
             });
+            $scope.wish.$save();
         } else { /* createMode */
             var wishlist = $firebase(Ref.wishlist(uid)).$asArray();
-            wishlist.$add($scope.wish).then(function(ref) {
-                $scope.newPics.forEach(function(entry) {
-                    $firebase(Ref.wishPictures(uid, ref.key())).$asArray().$add(entry);
+            wishlist.$add($scope.wish).then(function(wish) {
+                pics.forEach(function(p) {
+                    if (!p.deleted) {
+                        $firebase(Ref.wishPictures(uid, wish.key())).$asArray().$add(p);
+                        wish.update({hasPicture: true});
+                    }
                 });
+                
             });
         }
+
 
         $ionicHistory.goBack();
     };
 
     $scope.insertPic = function(camera) {
         Camera.getPicture(camera).then(function(imageURI) {
-            $scope.newPics.push('data:image/jpeg;base64,' + imageURI);
+            pics.push({
+                $value: 'data:image/jpeg;base64,' + imageURI
+            });
         }, function(err) {
             Utils.toastLong(err);
         });
+    };
+
+    $scope.delPic = function(index) {
+        pics[index].deleted = true;
     };
 })
 
