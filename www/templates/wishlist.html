@@ -14,7 +14,7 @@
             </div>
             <div class="item item-divider item-divider-button">
                 <div style="position:absolute;right:0px;">
-                    <a class="button button-small button-icon icon ion-ios-eye" ng-href="#/app/picture/{{wish.$id}}" ng-disabled='!wish.hasPicture'></a>
+                    <a class="button button-small button-icon icon ion-ios-eye" ng-href="#/app/picture/{{uid}}/{{wish.$id}}" ng-disabled='!wish.hasPicture'></a>
                     <a class="button button-small button-icon icon ion-ios-paperplane" ng-click="clickUrl(wish.url)" ng-disabled="!wish.url"></a>
                     <a class="button button-small button-icon icon ion-ios-compose" ng-href="#/app/wish?wishId={{wish.$id}}" ng-show='editable'></a>
                     <a class="button button-small button-icon icon ion-ios-trash" ng-click='removeWish(wish.$id)' ng-show='editable'></a>

@@ -87,6 +87,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
     $scope.editable = ($stateParams.uid == null);
     var uid = $stateParams.uid || authData.uid;
+    $scope.uid = uid;
 
     $scope.wishlist = $firebase(Ref.wishlist(uid)).$asArray();
 
@@ -106,7 +107,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 })
 
 .controller('WishCtrl', function($scope, $stateParams, $timeout, $ionicHistory, $ionicLoading, $firebase, $firebaseAuth, authData, Utils, Ref, Camera) {
-    var uid = authData.uid;
+    var uid = $stateParams.uid || authData.uid;
     var editMode = $stateParams.wishId ? true : false; /* edit or create */
 
     $scope.wish = {};
