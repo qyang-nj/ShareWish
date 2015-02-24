@@ -15,6 +15,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             $state.go("app.wishlist");
 
             /* Prepare side menue */
+            $scope.uid = authData.uid;
             var list = $firebase(Ref.beSharedList(authData.uid)).$asArray();
             list.$watch(function(event) {
                 if (event.event == 'child_added') {
@@ -61,7 +62,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             }).catch(function(error) {
                 Utils.toastLong(error.message);
             });
-        } else { //sign up
+        } else { /* sign up */
             Auth.$createUser($scope.loginData).then(function(userData) {
                 console.log("User " + userData.uid + " created successfully!");
                 $firebase(ref.emailUidMap().child(Utils.emailToKey($scope.loginData.email))).$set(userData.uid);
@@ -77,10 +78,9 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 })
 
 .controller('WishlistCtrl', function($scope, $state, $stateParams, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref) {
-    if (authData == null) return;
-
-    $scope.editable = ($stateParams.uid == null);
     var uid = $stateParams.uid || authData.uid;
+
+    $scope.editable = (uid == authData.uid);
     $scope.uid = uid;
 
     $scope.wishlist = $firebase(Ref.wishlist(uid)).$asArray();
