@@ -1,22 +1,23 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <widget id="me.roovent.loverswish" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-  <name>Share Wish</name>
-  <description>&#xD;
-        A wishlist shared with your lover&#xD;
+    <name>Share Wish</name>
+    <description>
+        A wishlist shared with your lover
     </description>
-  <author email="yangq.nj@gamil.com" href="http://roovent.me">&#xD;
-        Roovent&#xD;
+    <author email="yangq.nj@gamil.com" href="http://roovent.me">
+        Roovent
     </author>
-  <content src="index.html"/>
-  <access origin="*"/>
-  <preference name="webviewbounce" value="false"/>
-  <preference name="UIWebViewBounce" value="false"/>
-  <preference name="DisallowOverscroll" value="true"/>
-  <preference name="BackupWebStorage" value="none"/>
-  <feature name="StatusBar">
-    <param name="ios-package" value="CDVStatusBar" onload="true"/>
-  </feature>
-  <platform name="android">
-    <icon src="icons/android/wishlist_icon.png" width="96" height="96"/>
-  </platform>
+    <content src="index.html" />
+    <access origin="*" />
+    <preference name="webviewbounce" value="false" />
+    <preference name="UIWebViewBounce" value="false" />
+    <preference name="DisallowOverscroll" value="true" />
+    <preference name="BackupWebStorage" value="none" />
+    <feature name="StatusBar">
+        <param name="ios-package" value="CDVStatusBar" onload="true" />
+    </feature>
+
+    <platform name="android">
+        <icon src="icons/android/wishlist_icon.png" width="96" height="96" />
+    </platform>
 </widget>
