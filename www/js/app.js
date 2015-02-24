@@ -18,21 +18,31 @@ angular.module('starter', ['ionic', 'starter.controllers', 'app.services'])
 
 .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
+        .state('auth', {
+            url: "/auth",
+            template: "",
+            controller: 'AuthCtrl'
+        })
         .state('app', {
             url: "/app",
             abstract: true,
             templateUrl: "templates/menu.html",
-            controller: 'AppCtrl'
+            controller: 'AppCtrl',
+            resolve: {
+                authData: ["Auth", function(Auth) {
+                    return Auth.$requireAuth();
+                }]
+            }
         })
         .state('app.wishlist', {
-            url: "/wishlist?uid",
+            url: "/wishlist/:uid",
             views: {
                 'content': {
                     templateUrl: "templates/wishlist.html",
                     controller: 'WishlistCtrl',
                     resolve: {
                         authData: ["Auth", function(Auth) {
-                            return Auth.$waitForAuth();
+                            return Auth.$requireAuth();
                         }]
                     }
                 }
@@ -96,5 +106,5 @@ angular.module('starter', ['ionic', 'starter.controllers', 'app.services'])
         });
 
     // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/app/wishlist');
+    $urlRouterProvider.otherwise('/auth');
 });

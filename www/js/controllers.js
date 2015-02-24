@@ -1,48 +1,47 @@
 angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
-.controller('AppCtrl', function($scope, $state, $ionicModal, $ionicHistory, $firebase, $firebaseAuth, Utils, Ref, Auth) {
-    // var auth = $firebaseAuth(Ref.root());
-
-    /* Create the login modal that we will use later */
-    $ionicModal.fromTemplateUrl('templates/login.html', {
-        scope: $scope,
-        hardwareBackButtonClose: false
-    }).then(function(modal) {
-        $scope.modal = modal;
-
-        Auth.$onAuth(function(authData) {
-            if (!authData) {
-                delete $scope.authData;
-                $scope.login();
-                return;
-            }
-
-            console.log("[AppCtrl] Authenticated user with uid:", authData.uid);
-            $scope.authData = authData;
-
-            var list = $firebase(Ref.beSharedList(authData.uid)).$asArray();
-            list.$watch(function(event) {
-                if (event.event == 'child_added') {
-                    var rec = list.$getRecord(event.key);
-                    $firebase(Ref.displayName(rec.$value)).$asObject().$loaded().then(function(dName) {
-                        rec.uid = rec.$value;
-                        rec.displayName = dName.$value;
-                    });
-                }
-            });
-            $scope.beSharedList = list;
+.controller('AuthCtrl', function($scope, $state, $ionicModal, $ionicHistory, Auth, Utils) {
+    function gotoMainView(uid) {
+        $ionicHistory.nextViewOptions({
+            disableAnimate: true,
+            disableBack: true,
+            // historyRoot: true
         });
+        $state.go("app.wishlist", {
+            uid: uid
+        });
+    }
+
+    $scope.$on('$ionicView.beforeEnter', function() {
+        console.log('$ionicView.beforeEnter');
+        var authData = Auth.$getAuth();
+        if (authData) {
+            gotoMainView(authData.uid);
+        }
     });
 
-    // Form data for the login modal
+    Auth.$onAuth(function(authData) {
+        if (!authData) {
+            if ($scope.modal) {
+                $scope.modal.show();
+            } else {
+                /* Create the login modal that we will use later */
+                $ionicModal.fromTemplateUrl('templates/login.html', {
+                    scope: $scope,
+                    hardwareBackButtonClose: false
+                }).then(function(modal) {
+                    $scope.modal = modal;
+                    modal.show();
+                });
+            }
+        } else {
+            gotoMainView(authData.uid);
+        }
+    });
+
     $scope.loginData = {};
     $scope.loginMode = true;
 
-    $scope.login = function() {
-        $scope.modal.show();
-    };
-
-    // Triggered in the login modal to close it
     $scope.closeLogin = function() {
         $scope.modal.hide();
         $scope.loginMode = true;
@@ -56,18 +55,11 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     $scope.doLogin = function() {
         if ($scope.loginMode) { /* Login */
             Auth.$authWithPassword($scope.loginData).then(function(authData) {
-                $ionicHistory.clearCache();
-                $ionicHistory.nextViewOptions({
-                    disableAnimate: true,
-                    disableBack: true,
-                    historyRoot: true
-                });
-                $state.go("app.wishlist");
                 $scope.closeLogin();
             }).catch(function(error) {
                 Utils.toastLong(error.message);
             });
-        } else { //sign up
+        } else { /* sign up */
             Auth.$createUser($scope.loginData).then(function(userData) {
                 console.log("User " + userData.uid + " created successfully!");
                 $firebase(ref.emailUidMap().child(Utils.emailToKey($scope.loginData.email))).$set(userData.uid);
@@ -82,10 +74,25 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 })
 
-.controller('WishlistCtrl', function($scope, $state, $stateParams, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref) {
-    if (authData == null) return;
+.controller('AppCtrl', function($scope, $state, $ionicModal, $ionicHistory, $firebase, $firebaseAuth, authData, Utils, Ref, Auth) {
+    $scope.uid = authData.uid;
 
-    $scope.editable = ($stateParams.uid == null);
+    var list = $firebase(Ref.beSharedList(authData.uid)).$asArray();
+    list.$watch(function(event) {
+        if (event.event == 'child_added') {
+            var rec = list.$getRecord(event.key);
+            $firebase(Ref.displayName(rec.$value)).$asObject().$loaded().then(function(dName) {
+                rec.uid = rec.$value;
+                rec.displayName = dName.$value;
+            });
+        }
+    });
+    $scope.beSharedList = list;
+})
+
+.controller('WishlistCtrl', function($scope, $state, $stateParams, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref) {
+    console.log($stateParams.uid);
+    $scope.editable = ($stateParams.uid == authData.uid);
     var uid = $stateParams.uid || authData.uid;
     $scope.uid = uid;
 
@@ -184,7 +191,6 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
             });
         }
-
 
         $ionicHistory.goBack();
     };
