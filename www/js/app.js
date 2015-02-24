@@ -20,7 +20,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'app.services'])
     $stateProvider
         .state('app', {
             url: "/app",
-            abstract: true,
             templateUrl: "templates/menu.html",
             controller: 'AppCtrl'
         })
@@ -32,7 +31,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'app.services'])
                     controller: 'WishlistCtrl',
                     resolve: {
                         authData: ["Auth", function(Auth) {
-                            return Auth.$waitForAuth();
+                            return Auth.$requireAuth();
                         }]
                     }
                 }
@@ -96,5 +95,5 @@ angular.module('starter', ['ionic', 'starter.controllers', 'app.services'])
         });
 
     // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/app/wishlist');
+    $urlRouterProvider.otherwise('/app');
 });

@@ -1,25 +1,20 @@
 angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
 .controller('AppCtrl', function($scope, $state, $ionicModal, $ionicHistory, $firebase, $firebaseAuth, Utils, Ref, Auth) {
-    // var auth = $firebaseAuth(Ref.root());
+    var loginModal;
+    var authData;
 
-    /* Create the login modal that we will use later */
-    $ionicModal.fromTemplateUrl('templates/login.html', {
-        scope: $scope,
-        hardwareBackButtonClose: false
-    }).then(function(modal) {
-        $scope.modal = modal;
+    Auth.$onAuth(function(authData) {
+        if (authData) {
+            $ionicHistory.clearCache();
+            $ionicHistory.nextViewOptions({
+                disableAnimate: true,
+                disableBack: true,
+                historyRoot: true
+            });
+            $state.go("app.wishlist");
 
-        Auth.$onAuth(function(authData) {
-            if (!authData) {
-                delete $scope.authData;
-                $scope.login();
-                return;
-            }
-
-            console.log("[AppCtrl] Authenticated user with uid:", authData.uid);
-            $scope.authData = authData;
-
+            /* Prepare side menue */
             var list = $firebase(Ref.beSharedList(authData.uid)).$asArray();
             list.$watch(function(event) {
                 if (event.event == 'child_added') {
@@ -31,20 +26,26 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                 }
             });
             $scope.beSharedList = list;
-        });
+        } else {
+            if (loginModal) {
+                loginModal.show();
+            } else {
+                $ionicModal.fromTemplateUrl('templates/login.html', {
+                    scope: $scope,
+                    hardwareBackButtonClose: false
+                }).then(function(modal) {
+                    loginModal = modal;
+                    loginModal.show();
+                });
+            }
+        }
     });
 
-    // Form data for the login modal
     $scope.loginData = {};
     $scope.loginMode = true;
 
-    $scope.login = function() {
-        $scope.modal.show();
-    };
-
-    // Triggered in the login modal to close it
     $scope.closeLogin = function() {
-        $scope.modal.hide();
+        loginModal.hide();
         $scope.loginMode = true;
     };
 
@@ -56,13 +57,6 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     $scope.doLogin = function() {
         if ($scope.loginMode) { /* Login */
             Auth.$authWithPassword($scope.loginData).then(function(authData) {
-                $ionicHistory.clearCache();
-                $ionicHistory.nextViewOptions({
-                    disableAnimate: true,
-                    disableBack: true,
-                    historyRoot: true
-                });
-                $state.go("app.wishlist");
                 $scope.closeLogin();
             }).catch(function(error) {
                 Utils.toastLong(error.message);
