@@ -299,6 +299,8 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 .controller('AccountCtrl', function($scope, $state, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref, Auth) {
     $scope.title = authData.password.email;
     $scope.profile = {};
+    $scope.pwd = {};
+    $scope.pwd.email = authData.password.email;
 
     $firebase(Ref.profile(authData.uid)).$asObject().$loaded().then(function(obj) {
         var profile = {};
@@ -313,6 +315,19 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         $firebase(Ref.profile(authData.uid)).$set(profile).then(function() {
             Utils.toastLong('Profile saved');
         });
+    };
+
+    $scope.changePassword = function() {
+        if ($scope.pwd.newPassword != $scope.pwd.confirmPassword) {
+            Utils.toastLong("Password should be consistent.");
+        } else {
+            Auth.$changePassword($scope.pwd).then(function() {
+                Utils.toastLong("Password changed successfully!");
+                Auth.$unauth();
+            }).catch(function(error) {
+                Utils.toastLong(error.message);
+            });
+        }
     };
 
     $scope.logout = function() {
