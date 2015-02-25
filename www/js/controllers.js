@@ -42,12 +42,21 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         }
     });
 
+    var login = function() {
+        Auth.$authWithPassword($scope.loginData).then(function(authData) {
+            $scope.closeLogin();
+        }).catch(function(error) {
+            Utils.toastLong(error.message);
+        });
+    };
+
     $scope.loginData = {};
     $scope.loginMode = true;
 
     $scope.closeLogin = function() {
-        loginModal.hide();
-        $scope.loginMode = true;
+        loginModal.hide().then(function() {
+            $scope.loginMode = true;
+        });
     };
 
     $scope.setLoginMode = function(loginMode) {
@@ -57,19 +66,13 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     // Perform the login action when the user submits the login form
     $scope.doLogin = function() {
         if ($scope.loginMode) { /* Login */
-            Auth.$authWithPassword($scope.loginData).then(function(authData) {
-                $scope.closeLogin();
-            }).catch(function(error) {
-                Utils.toastLong(error.message);
-            });
+            login();
         } else { /* sign up */
             Auth.$createUser($scope.loginData).then(function(userData) {
                 console.log("User " + userData.uid + " created successfully!");
                 $firebase(Ref.emailUidMap().child(Utils.emailToKey($scope.loginData.email))).$set(userData.uid);
                 $firebase(Ref.displayName(userData.uid)).$set($scope.loginData.displayName);
-
-                $scope.loginMode = true;
-                $scope.doLogin();
+                login();
             }).catch(function(error) {
                 Utils.toastLong(error.message);
             });
