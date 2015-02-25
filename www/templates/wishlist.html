@@ -1,23 +1,34 @@
-<ion-view view-title="Wishlist">
+<ion-view view-title="{{title}}">
     <ion-nav-buttons side="right">
         <button class="button button-icon button-clear ion-ios-plus-outline" ng-click='addWish()' ng-show='editable'>
         </button>
     </ion-nav-buttons>
     <ion-content>
+        <div class="empty-view" ng-if="wishlist.length == 0">
+            <p>{{emptyMsg}}</p>
+        </div>
         <div class="card" ng-repeat="wish in wishlist">
             <div class="item item-divider" style="height:40px;">
                 <h2><b>{{wish.name}}</b></h2>
             </div>
             <div class="item item-text-wrap">
                 <p>{{wish.detail}}</p>
-                <div class="url" ng-show="wish.url"><p>{{wish.url}}</p></div>
+                <div class="url" ng-show="wish.url">
+                    <p>{{wish.url}}</p>
+                </div>
             </div>
             <div class="item item-divider item-divider-button">
+                <div style="position:absolute;left:0px;">
+                    <button class="button button-small" ng-click="setPurchased($index, !purchased)" ng-show="editable">
+                        {{purchased ? "Want it again" : "Purchased"}}
+                    </button>
+                </div>
                 <div style="position:absolute;right:0px;">
                     <a class="button button-small button-icon icon ion-ios-eye" ng-href="#/app/picture/{{uid}}/{{wish.$id}}" ng-disabled='!wish.hasPicture'></a>
                     <a class="button button-small button-icon icon ion-ios-paperplane" ng-click="clickUrl(wish.url)" ng-disabled="!wish.url"></a>
                     <a class="button button-small button-icon icon ion-ios-compose" ng-href="#/app/wish?wishId={{wish.$id}}" ng-show='editable'></a>
                     <a class="button button-small button-icon icon ion-ios-trash" ng-click='removeWish(wish.$id)' ng-show='editable'></a>
+
                 </div>
             </div>
         </div>

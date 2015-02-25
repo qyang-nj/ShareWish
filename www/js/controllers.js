@@ -78,17 +78,27 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 })
 
 .controller('WishlistCtrl', function($scope, $state, $stateParams, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref) {
+    var emptyMsgOfPurcasedList = "You haven't purchased anything.";
+    var emptyMsgOfMyWishList = "Currently you don't have any wish.";
+    var emptyMsgOfOtherWishList = "Currently s/he doesn't have any wish.";
+
     var uid = $stateParams.uid || authData.uid;
+    var purchased = $stateParams.purchased == "true";
 
     $scope.editable = (uid == authData.uid);
     $scope.uid = uid;
+    $scope.purchased = purchased;
+    $scope.title = purchased ? "Purchased" : "Wishlist";
+    $scope.emptyMsg = purchased ? emptyMsgOfPurcasedList : (uid == authData.uid ? emptyMsgOfMyWishList : emptyMsgOfOtherWishList);
 
-    $scope.wishlist = $firebase(Ref.wishlist(uid)).$asArray();
+    $firebase(Ref.wishlist(uid).orderByChild("purchased").equalTo(purchased)).$asArray().$loaded().then(function(list) {
+        $scope.wishlist = list;
+    });
 
     $scope.removeWish = function(wishId) {
         $ionicPopup.confirm({
             title: 'Delete?',
-            template: 'Your wish will be removed from you wishlist.'
+            template: purchased ? 'The item will be removed from your purchased list.' : 'Your wish will be removed from your wishlist.'
         }).then(function(res) {
             if (res) {
                 var wishlist = $scope.wishlist;
@@ -105,6 +115,16 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     $scope.addWish = function() {
         $state.go('app.wish');
     };
+
+    $scope.setPurchased = function(index, purchased) {
+        $ionicPopup.alert({
+            title: purchased ? '<b>Your Wish Comes Ture!</b>' : '<b>Want it again?</b>',
+            template: purchased ? 'Your purchased item will be moved to purchased list.' : 'The item will be moved to wishlist again.'
+        }).then(function(res) {
+            $scope.wishlist[index].purchased = purchased;
+            $scope.wishlist.$save(index);
+        });
+    };
 })
 
 .controller('WishCtrl', function($scope, $stateParams, $timeout, $ionicHistory, $ionicLoading, $firebase, $firebaseAuth, authData, Utils, Ref, Camera) {
@@ -112,6 +132,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     var editMode = $stateParams.wishId ? true : false; /* edit or create */
 
     $scope.wish = {};
+    $scope.wish.purchased = false;
     $scope.pics = [];
 
     var pics = $scope.pics;

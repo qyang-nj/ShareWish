@@ -19,6 +19,10 @@
                 <ion-item nav-clear menu-close ng-href="#/app/wishlist/{{uid}}">
                     My Wishlist
                 </ion-item>
+                <ion-item nav-clear menu-close ng-href="#/app/wishlist/{{uid}}?purchased=true">
+                    Purchased
+                </ion-item>
+                <p class="shared-title" ng-show="beSharedList.length > 0">Shared</p>
                 <ion-item nav-clear menu-close ng-href="#/app/wishlist/{{share.uid}}" ng-repeat="share in beSharedList">
                     {{share.displayName}}
                 </ion-item>

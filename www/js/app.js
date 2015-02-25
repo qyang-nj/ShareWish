@@ -24,7 +24,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'app.services'])
             controller: 'AppCtrl'
         })
         .state('app.wishlist', {
-            url: "/wishlist/:uid",
+            url: "/wishlist/:uid?purchased",
             views: {
                 'content': {
                     templateUrl: "templates/wishlist.html",
