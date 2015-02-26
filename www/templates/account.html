@@ -27,6 +27,13 @@
             </label>
 
             <div class="item item-divider item-divider-button">
+                <h2>DISPLAY NAME</h2>
+                <button class="button button-small" ng-disabled="!displayName[0]" ng-click="updateDisplayName()">Update</button>
+            </div>
+            <label class="item item-input">
+                <input type="text" ng-model='displayName[0]'>
+            </label>
+            <div class="item item-divider item-divider-button">
                 <h2>SECURITY</h2>
                 <button class="button button-small" ng-disabled="!pwd.oldPassword || !pwd.newPassword || !pwd.confirmPassword" ng-click="changePassword()">Change password</button>
             </div>

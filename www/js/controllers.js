@@ -197,7 +197,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             title: 'Help',
             templateUrl: "templates/help.html"
         });
-    }
+    };
 })
 
 .controller('WishCtrl', function($scope, $stateParams, $timeout, $ionicHistory, $ionicLoading, $firebase, $firebaseAuth, authData, Utils, Ref, Camera) {
@@ -371,12 +371,17 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     $scope.profile = {};
     $scope.pwd = {};
     $scope.pwd.email = authData.password.email;
+    $scope.displayName = [];
 
     $firebase(Ref.profile(authData.uid)).$asObject().$loaded().then(function(obj) {
         var profile = {};
         $scope.profile.name = obj.name || '';
         $scope.profile.gender = obj.gender || 'Male';
         $scope.profile.birthday = new Date(obj.birthday || 631170000000); /* 1/1/1990 is default */
+    });
+
+    $firebase(Ref.displayName(authData.uid)).$asObject().$loaded().then(function(obj) {
+        $scope.displayName[0] = obj.$value;
     });
 
     $scope.saveProfile = function() {
@@ -408,6 +413,17 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             if (res) {
                 Auth.$unauth();
                 $state.reload();
+            }
+        });
+    };
+
+    $scope.updateDisplayName = function() {
+        console.log($scope.displayName[0]);
+        Ref.displayName(authData.uid).set($scope.displayName[0], function(error) {
+            if (error) {
+                Utils.toastLong(error.message);
+            } else {
+                Utils.toastLong("Display name updated");
             }
         });
     };
