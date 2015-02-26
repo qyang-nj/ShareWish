@@ -1,8 +1,37 @@
 angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
 .controller('AppCtrl', function($scope, $state, $ionicModal, $ionicHistory, $firebase, $firebaseAuth, Utils, Ref, Auth) {
+    $scope.loginData = {};
+    var modeEnum = {
+        LOGIN: {
+            buttonText: "Login",
+            title: "Login",
+            submit: login,
+            buttonDisabled: function() {
+                return !$scope.loginData.email || !$scope.loginData.password;
+            }
+        },
+        SIGN_UP: {
+            buttonText: "Sign Up",
+            title: "Sign Up",
+            submit: signup,
+            buttonDisabled: function() {
+                return !$scope.loginData.email || !$scope.loginData.password || !$scope.loginData.displayName;
+            }
+        },
+        FORGET_PASSWORD: {
+            buttonText: "Send Reset Email",
+            title: "Reset Password",
+            submit: forgetPassword,
+            buttonDisabled: function() {
+                return !$scope.loginData.email;
+            }
+        }
+    };
+
     var loginModal;
-    var authData;
+    $scope.modeEnum = modeEnum;
+    $scope.mode = modeEnum.LOGIN;
 
     Auth.$onAuth(function(authData) {
         if (authData) {
@@ -42,7 +71,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         }
     });
 
-    var login = function() {
+    function login() {
         Auth.$authWithPassword($scope.loginData).then(function(authData) {
             $scope.closeLogin();
         }).catch(function(error) {
@@ -50,33 +79,33 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         });
     };
 
-    $scope.loginData = {};
-    $scope.loginMode = true;
+    function signup() {
+        Auth.$createUser($scope.loginData).then(function(userData) {
+            console.log("User " + userData.uid + " created successfully!");
+            $firebase(Ref.emailUidMap().child(Utils.emailToKey($scope.loginData.email))).$set(userData.uid);
+            $firebase(Ref.displayName(userData.uid)).$set($scope.loginData.displayName);
+            login();
+        }).catch(function(error) {
+            Utils.toastLong(error.message);
+        });
+    }
+
+    function forgetPassword() {
+        Auth.$resetPassword($scope.loginData).then(function() {
+            Utils.toastLong("Password reset email sent successfully!");
+        }).catch(function(error) {
+            Utils.toastLong(error.message);
+        });
+    }
 
     $scope.closeLogin = function() {
         loginModal.hide().then(function() {
-            $scope.loginMode = true;
+            $scope.mode = modeEnum.LOGIN;
         });
     };
 
-    $scope.setLoginMode = function(loginMode) {
-        $scope.loginMode = loginMode;
-    };
-
-    // Perform the login action when the user submits the login form
-    $scope.doLogin = function() {
-        if ($scope.loginMode) { /* Login */
-            login();
-        } else { /* sign up */
-            Auth.$createUser($scope.loginData).then(function(userData) {
-                console.log("User " + userData.uid + " created successfully!");
-                $firebase(Ref.emailUidMap().child(Utils.emailToKey($scope.loginData.email))).$set(userData.uid);
-                $firebase(Ref.displayName(userData.uid)).$set($scope.loginData.displayName);
-                login();
-            }).catch(function(error) {
-                Utils.toastLong(error.message);
-            });
-        }
+    $scope.setMode = function(mode) {
+        $scope.mode = mode;
     };
 })
 
