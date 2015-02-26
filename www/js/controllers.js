@@ -189,7 +189,9 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 
     $scope.addWish = function() {
-        $state.go('app.wish', {uid: authData.uid});
+        $state.go('app.wish', {
+            uid: authData.uid
+        });
     };
 
     $scope.showHelp = function() {
@@ -201,18 +203,62 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 })
 
 .controller('WishCtrl', function(wish, $scope, $stateParams, $timeout, $ionicHistory, $ionicLoading, $firebase, authData, Utils, Ref, Camera) {
-    var uid = $stateParams.uid || authData.uid;
-    var editMode = $stateParams.wishId ? true : false; /* edit or create */
+    var modeEnum = {
+        EDIT: {
+            title: "Edit",
+            save: function() {
+                $scope.wish.hasPicture = false;
+                pics.forEach(function(p) {
+                    if ('$id' in p) { /* existing picture */
+                        if (p.deleted) {
+                            savedPics.$remove(savedPics.$indexFor(p.$id));
+                        } else {
+                            $scope.wish.hasPicture = true;
+                        }
+                    } else { /* new picture */
+                        if (!p.deleted) {
+                            savedPics.$add(p);
+                            $scope.wish.hasPicture = true;
+                        }
+                    }
+                });
+                $scope.wish.$save();
+            }
+        },
+        CREATE: {
+            title: "Create a Wish",
+            save: function() {
+                $scope.wish.hasPicture = false;
+                var wishlist = $firebase(Ref.wishlist(uid)).$asArray();
+                wishlist.$add($scope.wish).then(function(wish) {
+                    pics.forEach(function(p) {
+                        if (!p.deleted) {
+                            $firebase(Ref.wishPictures(uid, wish.key())).$asArray().$add(p);
+                            wish.update({
+                                hasPicture: true
+                            });
+                        }
+                    });
 
-    $scope.wish = wish || {};
-    $scope.wish.purchased = false;
+                });
+            }
+        }
+    };
+
+
+    var uid = $stateParams.uid;
+    var mode = $stateParams.wishId ? modeEnum.EDIT : modeEnum.CREATE;
+
+    $scope.mode = mode;
     $scope.pics = [];
+    $scope.wish = wish || {
+        purchased: false
+    };
 
     var pics = $scope.pics;
     var savedPics = null;
 
-    if (editMode) { /* if edit mode, read existing data. */
-        // $scope.wish = $firebase(Ref.wishlist(uid).child($stateParams.wishId)).$asObject();
+    if (mode === modeEnum.EDIT) { /* if edit mode, read existing data. */
         $timeout(function() {
             /* Downloading pictures takes a while, so delay to avoid interfering UI. */
             $ionicLoading.show({
@@ -238,40 +284,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
             }
         }
 
-        if (editMode) {
-            $scope.wish.hasPicture = false;
-            pics.forEach(function(p) {
-                if ('$id' in p) { /* existing picture */
-                    if (p.deleted) {
-                        savedPics.$remove(savedPics.$indexFor(p.$id));
-                    } else {
-                        $scope.wish.hasPicture = true;
-                    }
-                } else { /* new picture */
-                    if (!p.deleted) {
-                        savedPics.$add(p);
-                        $scope.wish.hasPicture = true;
-                    }
-                }
-            });
-            $scope.wish.$save();
-        } else { /* createMode */
-            $scope.wish.hasPicture = false;
-            var wishlist = $firebase(Ref.wishlist(uid)).$asArray();
-            wishlist.$add($scope.wish).then(function(wish) {
-                pics.forEach(function(p) {
-                    if (!p.deleted) {
-                        $firebase(Ref.wishPictures(uid, wish.key())).$asArray().$add(p);
-                        wish.update({
-                            hasPicture: true
-                        });
-                    }
-                });
-
-            });
-        }
-
-
+        mode.save();
         $ionicHistory.goBack();
     };
 
