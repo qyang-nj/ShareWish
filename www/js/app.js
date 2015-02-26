@@ -1,4 +1,4 @@
-angular.module('starter', ['ionic', 'starter.controllers', 'app.services'])
+angular.module('starter', ['starter.controllers', 'app.services', 'ionic', 'firebase'])
 
 .run(function($ionicPlatform) {
     console.log('Platform: ', ionic.Platform.platform());
@@ -32,13 +32,16 @@ angular.module('starter', ['ionic', 'starter.controllers', 'app.services'])
                     resolve: {
                         authData: ["Auth", function(Auth) {
                             return Auth.$requireAuth();
-                        }]
+                        }],
+                        displayName: function(Ref, $stateParams, $firebase) {
+                            return $firebase(Ref.displayName($stateParams.uid)).$asObject().$loaded();
+                        }
                     }
                 }
             }
         })
         .state('app.wish', {
-            url: "/wish?wishId",
+            url: "/wish/:uid?wishId",
             views: {
                 'content': {
                     templateUrl: "templates/wish.html",
@@ -46,7 +49,13 @@ angular.module('starter', ['ionic', 'starter.controllers', 'app.services'])
                     resolve: {
                         authData: ["Auth", function(Auth) {
                             return Auth.$requireAuth();
-                        }]
+                        }],
+                        wish: function(Ref, $stateParams, $firebase) {
+                            if ($stateParams.wishId) {
+                                return $firebase(Ref.wishlist($stateParams.uid).child($stateParams.wishId))
+                                    .$asObject().$loaded();
+                            }
+                        }
                     }
                 }
             }
@@ -88,7 +97,10 @@ angular.module('starter', ['ionic', 'starter.controllers', 'app.services'])
                     resolve: {
                         authData: ["Auth", function(Auth) {
                             return Auth.$requireAuth();
-                        }]
+                        }],
+                        wish: function(Ref, $stateParams, $firebase) {
+                            return $firebase(Ref.wishlist($stateParams.uid).child($stateParams.wishId)).$asObject().$loaded();
+                        }
                     }
                 }
             }

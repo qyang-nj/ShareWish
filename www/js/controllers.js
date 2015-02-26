@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
-.controller('AppCtrl', function($scope, $state, $ionicModal, $ionicHistory, $firebase, $firebaseAuth, Utils, Ref, Auth) {
+.controller('AppCtrl', function($scope, $state, $ionicModal, $ionicHistory, $firebase, Utils, Ref, Auth) {
     $scope.loginData = {};
     var modeEnum = {
         LOGIN: {
@@ -109,7 +109,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 })
 
-.controller('WishlistCtrl', function($scope, $state, $stateParams, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref) {
+.controller('WishlistCtrl', function($scope, $state, $stateParams, $ionicPopup, $firebase, authData, displayName, Utils, Ref) {
     var modeEnum = {
         MY_WISHLIST: {
             emptyMessage: "Currently you don't have any wish.",
@@ -147,7 +147,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         },
         SHARED_WISHLIST: {
             emptyMessage: "Currently s/he doesn't have any wish.",
-            title: "Shared Wishlist",
+            title: displayName.$value + "'s Wishlist",
             showAdd: false,
             editable: false
         }
@@ -189,7 +189,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 
     $scope.addWish = function() {
-        $state.go('app.wish');
+        $state.go('app.wish', {uid: authData.uid});
     };
 
     $scope.showHelp = function() {
@@ -200,11 +200,11 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 })
 
-.controller('WishCtrl', function($scope, $stateParams, $timeout, $ionicHistory, $ionicLoading, $firebase, $firebaseAuth, authData, Utils, Ref, Camera) {
+.controller('WishCtrl', function(wish, $scope, $stateParams, $timeout, $ionicHistory, $ionicLoading, $firebase, authData, Utils, Ref, Camera) {
     var uid = $stateParams.uid || authData.uid;
     var editMode = $stateParams.wishId ? true : false; /* edit or create */
 
-    $scope.wish = {};
+    $scope.wish = wish || {};
     $scope.wish.purchased = false;
     $scope.pics = [];
 
@@ -212,7 +212,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     var savedPics = null;
 
     if (editMode) { /* if edit mode, read existing data. */
-        $scope.wish = $firebase(Ref.wishlist(uid).child($stateParams.wishId)).$asObject();
+        // $scope.wish = $firebase(Ref.wishlist(uid).child($stateParams.wishId)).$asObject();
         $timeout(function() {
             /* Downloading pictures takes a while, so delay to avoid interfering UI. */
             $ionicLoading.show({
@@ -237,8 +237,6 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                 $scope.wish.url = 'http://' + url;
             }
         }
-
-        //$scope.wish.hasPicture = ($scope.newPics.length > 0 || ($scope.pictures !== null && $scope.pictures.length > 0));
 
         if (editMode) {
             $scope.wish.hasPicture = false;
@@ -292,7 +290,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 })
 
-.controller('ShareCtrl', function($scope, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref) {
+.controller('ShareCtrl', function($scope, $ionicPopup, $firebase, authData, Utils, Ref) {
     $scope.inputData = {};
     var invitationContent = 'Hi,\n\n' +
         'I\'m using ShareWish, a mobile app allowing us share our wishes. ' +
@@ -385,7 +383,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 })
 
-.controller('AccountCtrl', function($scope, $state, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref, Auth) {
+.controller('AccountCtrl', function($scope, $state, $ionicPopup, $firebase, authData, Utils, Ref, Auth) {
     $scope.title = authData.password.email;
     $scope.profile = {};
     $scope.pwd = {};
