@@ -191,6 +191,13 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     $scope.addWish = function() {
         $state.go('app.wish');
     };
+
+    $scope.showHelp = function() {
+        $ionicPopup.alert({
+            title: 'Help',
+            templateUrl: "templates/help.html"
+        });
+    }
 })
 
 .controller('WishCtrl', function($scope, $stateParams, $timeout, $ionicHistory, $ionicLoading, $firebase, $firebaseAuth, authData, Utils, Ref, Camera) {
