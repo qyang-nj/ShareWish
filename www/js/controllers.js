@@ -77,7 +77,7 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
         }).catch(function(error) {
             Utils.toastLong(error.message);
         });
-    };
+    }
 
     function signup() {
         Auth.$createUser($scope.loginData).then(function(userData) {
@@ -110,27 +110,71 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 })
 
 .controller('WishlistCtrl', function($scope, $state, $stateParams, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref) {
-    var emptyMsgOfPurcasedList = "You haven't purchased anything.";
-    var emptyMsgOfMyWishList = "Currently you don't have any wish.";
-    var emptyMsgOfOtherWishList = "Currently s/he doesn't have any wish.";
+    var modeEnum = {
+        MY_WISHLIST: {
+            emptyMessage: "Currently you don't have any wish.",
+            title: "My Wishlist",
+            showAdd: true,
+            editable: true,
+            delWarning: "Your wish will be removed from your wishlist.",
+            leftBtnText: "Purchased",
+            leftBtnOnClick: function(index) {
+                $ionicPopup.alert({
+                    title: '<b>Your Wish Comes Ture!</b>',
+                    template: 'Your purchased item will be moved to purchased list.'
+                }).then(function(res) {
+                    $scope.wishlist[index].purchased = true;
+                    $scope.wishlist.$save(index);
+                });
+            },
+        },
+        PURCHASED_LIST: {
+            emptyMessage: "You haven't purchased anything.",
+            title: "Purchased List",
+            showAdd: false,
+            editable: true,
+            delWarning: "The item will be removed from your purchased list.",
+            leftBtnText: "Want it again",
+            leftBtnOnClick: function(index, purchased) {
+                $ionicPopup.alert({
+                    title: '<b>Want it again?</b>',
+                    template: 'The item will be moved to wishlist again.'
+                }).then(function(res) {
+                    $scope.wishlist[index].purchased = false;
+                    $scope.wishlist.$save(index);
+                });
+            },
+        },
+        SHARED_WISHLIST: {
+            emptyMessage: "Currently s/he doesn't have any wish.",
+            title: "Shared Wishlist",
+            showAdd: false,
+            editable: false
+        }
+    };
 
+    var mode;
     var uid = $stateParams.uid || authData.uid;
-    var purchased = $stateParams.purchased == "true";
+    if (uid == authData.uid) {
+        if ($stateParams.purchased == "true") {
+            mode = modeEnum.PURCHASED_LIST;
+        } else {
+            mode = modeEnum.MY_WISHLIST;
+        }
+    } else {
+        mode = modeEnum.SHARED_WISHLIST;
+    }
 
-    $scope.editable = (uid == authData.uid);
+    $scope.mode = mode;
     $scope.uid = uid;
-    $scope.purchased = purchased;
-    $scope.title = purchased ? "Purchased" : "Wishlist";
-    $scope.emptyMsg = purchased ? emptyMsgOfPurcasedList : (uid == authData.uid ? emptyMsgOfMyWishList : emptyMsgOfOtherWishList);
-
-    $firebase(Ref.wishlist(uid).orderByChild("purchased").equalTo(purchased)).$asArray().$loaded().then(function(list) {
+    $firebase(Ref.wishlist(uid).orderByChild("purchased").equalTo(mode == modeEnum.PURCHASED_LIST)).$asArray().$loaded().then(function(list) {
         $scope.wishlist = list;
     });
 
     $scope.removeWish = function(wishId) {
         $ionicPopup.confirm({
             title: 'Delete?',
-            template: purchased ? 'The item will be removed from your purchased list.' : 'Your wish will be removed from your wishlist.'
+            template: mode.delWarning
         }).then(function(res) {
             if (res) {
                 var wishlist = $scope.wishlist;
@@ -146,16 +190,6 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
     $scope.addWish = function() {
         $state.go('app.wish');
-    };
-
-    $scope.setPurchased = function(index, purchased) {
-        $ionicPopup.alert({
-            title: purchased ? '<b>Your Wish Comes Ture!</b>' : '<b>Want it again?</b>',
-            template: purchased ? 'Your purchased item will be moved to purchased list.' : 'The item will be moved to wishlist again.'
-        }).then(function(res) {
-            $scope.wishlist[index].purchased = purchased;
-            $scope.wishlist.$save(index);
-        });
     };
 })
 
