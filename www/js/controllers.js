@@ -294,6 +294,10 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
 
 .controller('ShareCtrl', function($scope, $ionicPopup, $firebase, $firebaseAuth, authData, Utils, Ref) {
     $scope.inputData = {};
+    var invitationContent = 'Hi,\n\n' +
+        'I\'m using ShareWish, a mobile app allowing us share our wishes. ' +
+        'I want to share mine with you and you could download the app from Google Play.' +
+        '\n\nBest';
 
     var shareList = $firebase(Ref.shareList(authData.uid)).$asArray();
     $scope.shareList = shareList;
@@ -329,10 +333,25 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                     console.log(email + ' is not a registered user.');
                     $ionicPopup.confirm({
                         title: 'Invite ' + email + '?',
-                        template: email + ' is not a registered user. Do you want to invite him/her to use Lover\'s Wish?'
+                        template: email + ' is not a registered user. Do you want to invite him/her to use ShareWish?'
                     }).then(function(res) {
                         if (res) {
-                            //TODO: send invitation
+                            /* send invitation */
+                            if (window.plugins && window.plugins.emailComposer) {
+                                window.plugins.emailComposer.showEmailComposerWithCallback(function(result) {
+                                        console.log("Response -> " + result);
+                                    },
+                                    "Invitation of ShareWish", // Subject
+                                    invitationContent, // Body
+                                    [email], // To
+                                    null, // CC
+                                    null, // BCC
+                                    false, // isHTML
+                                    null, // Attachments
+                                    null); // Attachment Data
+                            } else {
+                                Utils.toastLong("Your device doesn't support sending email.");
+                            }
                         }
                     });
                 }
