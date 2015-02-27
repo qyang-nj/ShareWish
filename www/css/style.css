@@ -29,6 +29,12 @@
     right: 2px;
     opacity: 0.8;
 }
+.photo img {
+    object-fit: cover;
+    object-position: center;
+    height: 130px;
+    width: 130px;
+}
 .url {
     border: solid #383838;
     border-width: 0 0 0 3px;

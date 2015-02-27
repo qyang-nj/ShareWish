@@ -25,7 +25,7 @@
 
         <div class="album">
             <div class="photo" ng-repeat='p in pics' ng-show="!p.deleted">
-                <img ng-src="{{p.$value}}" width="136" height="136"></img>
+                <img ng-src="{{p.$value}}"></img>
                 <button class="button button-small icon ion-close-round" ng-click="delPic($index)"></button>
             </div>
         </div>
