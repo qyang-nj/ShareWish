@@ -270,7 +270,9 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                 for (var i = 0; i < savedPics.length; ++i) {
                     pics.push(savedPics[i]);
                 }
-
+            }).catch(function(error) {
+                Utils.toastLong(error.message);
+            }).finally(function() {
                 $ionicLoading.hide();
             });
         }, 400);
