@@ -169,6 +169,16 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     $scope.uid = uid;
     $firebase(Ref.wishlist(uid).orderByChild("purchased").equalTo(mode == modeEnum.PURCHASED_LIST)).$asArray().$loaded().then(function(list) {
         $scope.wishlist = list;
+
+        var pictures = {};
+        list.forEach(function(entry) {
+            $firebase(Ref.wishPictures(uid, entry.$id).limitToFirst(1)).$asArray().$loaded().then(function(picList) {
+                if (picList.length > 0) {
+                    pictures[entry.$id] = picList[0].$value;
+                }
+            });
+        });
+        $scope.pictures = pictures;
     });
 
     $scope.removeWish = function(wishId) {

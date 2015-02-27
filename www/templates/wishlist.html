@@ -11,7 +11,12 @@
             <div class="item item-divider" style="height:40px;">
                 <h2><b>{{wish.name}}</b></h2>
             </div>
-            <div class="item item-text-wrap">
+            <div class="item item-text-wrap" style="overflow: hidden;">
+                <div class="photo" style="float: right;" ng-if="pictures[wish.$id]">
+                    <a ng-href="#/app/picture/{{uid}}/{{wish.$id}}">
+                        <img ng-src="{{pictures[wish.$id]}}" style="height: 100px; width: 100px;"></img>
+                    </a>
+                </div>
                 <p>{{wish.detail}}</p>
                 <div class="url" ng-show="wish.url">
                     <p>{{wish.url}}</p>
