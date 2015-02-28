@@ -1,4 +1,4 @@
-angular.module('starter', ['starter.controllers', 'app.services', 'ionic', 'firebase'])
+angular.module('app', ['app.controllers', 'app.services', 'ionic', 'firebase'])
 
 .run(function($ionicPlatform) {
     console.log('Platform: ', ionic.Platform.platform());

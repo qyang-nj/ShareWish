@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<widget id="me.roovent.loverswish" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="me.roovent.sharewish" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Share Wish</name>
     <description>
-        A wishlist shared with your lover
+        Share your wishes to others
     </description>
     <author email="yangq.nj@gamil.com" href="http://roovent.me">
         Roovent

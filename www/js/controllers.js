@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
+angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
 
 .controller('AppCtrl', function($scope, $state, $ionicModal, $ionicHistory, $firebase, Utils, Ref, Auth) {
     $scope.loginData = {};
