@@ -232,7 +232,9 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                         }
                     }
                 });
-                $scope.wish.$save();
+                $scope.wish.$save().finally(function() {
+                    $ionicLoading.hide();
+                });
             }
         },
         CREATE: {
@@ -250,6 +252,8 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
                         }
                     });
 
+                }).finally(function() {
+                    $ionicLoading.hide();
                 });
             }
         }
@@ -289,6 +293,10 @@ angular.module('starter.controllers', ['app.services', 'ngStorage', 'firebase'])
     }
 
     $scope.saveWish = function() {
+        $ionicLoading.show({
+            template: 'Saving...'
+        });
+
         var url = $scope.wish.url;
         if (url) {
             if (!Utils.validateUrl(url)) {
