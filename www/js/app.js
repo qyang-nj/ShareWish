@@ -1,6 +1,6 @@
 angular.module('app', ['app.controllers', 'app.services', 'ionic', 'firebase'])
 
-.run(function($ionicPlatform) {
+.run(function($rootScope, $ionicPlatform, $ionicPopup) {
     console.log('Platform: ', ionic.Platform.platform());
 
     $ionicPlatform.ready(function() {
@@ -13,6 +13,15 @@ angular.module('app', ['app.controllers', 'app.services', 'ionic', 'firebase'])
             // org.apache.cordova.statusbar required
             StatusBar.styleDefault();
         }
+    });
+
+    $rootScope.$on('$cordovaNetwork:offline', function() {
+        $ionicPopup.alert({
+            title: 'No Network Connection!',
+            template: 'The app will close. Please check your cellular or wifi connection.'
+        }).then(function() {
+            ionic.Platform.exitApp();
+        }) ;
     });
 })
 
