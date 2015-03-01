@@ -303,6 +303,8 @@ angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
             }
         }
 
+        $scope.wish.time = new Date().getTime();
+
         mode.save();
         $ionicHistory.goBack();
     };

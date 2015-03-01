@@ -9,9 +9,9 @@
         <div class="list card" ng-repeat="wish in wishlist">
 
             <div class="item item-avatar">
-                <img ng-src="{{pictures[wish.$id]}}">
+                <!-- <img ng-src="{{pictures[wish.$id]}}"> -->
                 <h2><b>{{wish.name}}</b></h2>
-                <p>November 05, 1955</p>
+                <p>{{wish.time | date}}</p>
             </div>
 
             <div class="item item-body">
