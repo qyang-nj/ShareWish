@@ -109,7 +109,7 @@ angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
     };
 })
 
-.controller('WishlistCtrl', function($scope, $state, $stateParams, $ionicPopup, $firebase, authData, displayName, Utils, Ref) {
+.controller('WishlistCtrl', function($scope, $state, $stateParams, $ionicPopup, $ionicLoading, $firebase, authData, displayName, Utils, Ref) {
     var modeEnum = {
         MY_WISHLIST: {
             emptyMessage: "Currently you don't have any wish.",
@@ -165,6 +165,10 @@ angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
         mode = modeEnum.SHARED_WISHLIST;
     }
 
+    $ionicLoading.show({
+        template: 'Loading...'
+    });
+
     $scope.mode = mode;
     $scope.uid = uid;
     $firebase(Ref.wishlist(uid).orderByChild("purchased").equalTo(mode == modeEnum.PURCHASED_LIST)).$asArray().$loaded().then(function(list) {
@@ -179,6 +183,8 @@ angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
             });
         });
         $scope.pictures = pictures;
+    }).finally(function(){
+        $ionicLoading.hide();
     });
 
     $scope.removeWish = function(wishId) {
