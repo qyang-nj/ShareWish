@@ -7,34 +7,34 @@
         <div class="empty-view" ng-if="wishlist.length == 0">
             <p>{{mode.emptyMessage}}</p>
         </div>
-        <div class="card" ng-repeat="wish in wishlist">
-            <div class="item item-divider" style="height:40px;">
+        <div class="list card" ng-repeat="wish in wishlist">
+
+            <div class="item item-avatar">
+                <img ng-src="{{pictures[wish.$id]}}">
                 <h2><b>{{wish.name}}</b></h2>
+                <p>November 05, 1955</p>
             </div>
-            <div class="item item-text-wrap" style="overflow: hidden;">
-                <div class="photo" style="float: right;" ng-if="pictures[wish.$id]">
-                    <a ng-href="#/app/picture/{{uid}}/{{wish.$id}}">
-                        <img ng-src="{{pictures[wish.$id]}}" style="height: 100px; width: 100px;"></img>
-                    </a>
-                </div>
+
+            <div class="item item-body">
+                <a ng-href="#/app/picture/{{uid}}/{{wish.$id}}">
+                    <img class="full-image" ng-src="{{pictures[wish.$id]}}" ng-if="pictures[wish.$id]">
+                </a>
                 <p>{{wish.detail}}</p>
-                <div class="url" ng-show="wish.url">
-                    <p>{{wish.url}}</p>
-                </div>
+                <p class='url' ng-show='wish.url' ng-click="clickUrl(wish.url)">{{wish.url}}</p>
             </div>
-            <div class="item item-divider item-divider-button">
-                <div style="position:absolute;left:0px;">
-                    <button class="button button-small" ng-click="mode.leftBtnOnClick($index)" ng-show="mode.editable">
-                        {{mode.leftBtnText}}
-                    </button>
-                </div>
-                <div style="position:absolute;right:0px;">
-                    <a class="button button-small button-icon icon ion-ios-eye" ng-href="#/app/picture/{{uid}}/{{wish.$id}}" ng-disabled='!wish.hasPicture'></a>
-                    <a class="button button-small button-icon icon ion-ios-paperplane" ng-click="clickUrl(wish.url)" ng-disabled="!wish.url"></a>
-                    <a class="button button-small button-icon icon ion-ios-compose" ng-href="#/app/wish/{{uid}}?wishId={{wish.$id}}" ng-show='mode.editable'></a>
-                    <a class="button button-small button-icon icon ion-ios-trash" ng-click='removeWish(wish.$id)' ng-show='mode.editable'></a>
-                </div>
+
+            <div class="item tabs tabs-secondary tabs-icon-left" ng-show='mode.editable'>
+                <a class="tab-item" ng-click="mode.leftBtnOnClick($index)">
+                    <i class="icon ion-cash"></i> {{mode.leftBtnText}}
+                </a>
+                <a class="tab-item" ng-href="#/app/wish/{{uid}}?wishId={{wish.$id}}">
+                    <i class="icon ion-edit"></i> Edit
+                </a>
+                <a class="tab-item" href="#" ng-click='removeWish(wish.$id)'>
+                    <i class="icon ion-trash-b"></i> Delete
+                </a>
             </div>
+
         </div>
     </ion-content>
 </ion-view>
