@@ -183,7 +183,7 @@ angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
             });
         });
         $scope.pictures = pictures;
-    }).finally(function(){
+    }).finally(function() {
         $ionicLoading.hide();
     });
 
@@ -207,13 +207,6 @@ angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
     $scope.addWish = function() {
         $state.go('app.wish', {
             uid: authData.uid
-        });
-    };
-
-    $scope.showHelp = function() {
-        $ionicPopup.alert({
-            title: 'Help',
-            templateUrl: "templates/help.html"
         });
     };
 })

@@ -57,12 +57,3 @@
     line-height: 30px;
     color: #A0A0A0;
 }
-
-/* BEGIN: fix issue of displaying navi buttons on SONY Xperia Z3. */
-.buttons-right span {
-    width: 80px;
-}
-.buttons-right button{
-    float: right;
-}
-/* END */

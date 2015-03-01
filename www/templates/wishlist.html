@@ -1,7 +1,6 @@
 <ion-view view-title="{{mode.title}}">
     <ion-nav-buttons side="right">
         <button class="button button-icon button-clear ion-ios-plus-outline" ng-click='addWish()' ng-show='mode.showAdd'></button>
-        <button class="button button-icon button-clear ion-ios-help-outline" ng-click='showHelp()'></button>
     </ion-nav-buttons>
     <ion-content>
         <div class="empty-view" ng-if="wishlist.length == 0">
