@@ -18,7 +18,7 @@
                     <img ng-src="{{pictures[wish.$id]}}" ng-if="pictures[wish.$id]">
                 </a>
                 <p>{{wish.detail}}</p>
-                <p class='url' ng-show='wish.url' ng-click="clickUrl(wish.url)">{{wish.url}}</p>
+                <p class='url' style="overflow: hidden;" ng-show='wish.url' ng-click="clickUrl(wish.url)">{{wish.url}}</p>
             </div>
 
             <div class="item tabs tabs-secondary tabs-icon-left" ng-show='mode.editable'>
@@ -32,7 +32,6 @@
                     <i class="icon ion-trash-b"></i> Delete
                 </a>
             </div>
-
         </div>
     </ion-content>
 </ion-view>

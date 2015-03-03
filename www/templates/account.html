@@ -4,7 +4,7 @@
     </ion-nav-buttons>
     <ion-content>
         <div class="list">
-            <div class="item item-divider item-divider-button">
+<!--             <div class="item item-divider item-divider-button">
                 <h2>PROFILE</h2>
                 <button class="button button-small" ng-click='saveProfile()'>Save</button>
             </div>
@@ -24,7 +24,7 @@
             <label class="item item-input item-stacked-label">
                 <span class="input-label">Date of Birth</span>
                 <input type="date" ng-model='profile.birthday'>
-            </label>
+            </label> -->
 
             <div class="item item-divider item-divider-button">
                 <h2>DISPLAY NAME</h2>
@@ -46,9 +46,10 @@
             <label class="item item-input">
                 <input type="password" placeholder="Confirm Password" ng-model="pwd.confirmPassword">
             </label>
+            <button class="button button-full button-positive" style="margin-top: 0;" ng-click='logout()'>
+                Logout
+            </button>
         </div>
-        <button class="button button-full button-positive" ng-click='logout()'>
-            Logout
-        </button>
+
     </ion-content>
 </ion-view>
