@@ -2,34 +2,35 @@
     <ion-nav-buttons side="right">
         <button class="button button-icon button-clear ion-ios-plus-outline" ng-click='addWish()' ng-show='mode.showAdd'></button>
     </ion-nav-buttons>
-    <ion-content>
+    <ion-content style="background: #E6E6E6;">
         <div class="empty-view" ng-if="wishlist.length == 0">
             <p>{{mode.emptyMessage}}</p>
         </div>
         <div class="list card" ng-repeat="wish in wishlist">
 
             <div class="item item-avatar" style="padding-left: 20px">
-                <h2><b>{{wish.name}}</b></h2>
-                <p>{{wish.time | date}}</p>
-            </div>
-
-            <div class="item item-body">
-                <a ng-href="#/app/picture/{{uid}}/{{wish.$id}}" class="photo" style="float: right;">
+                <a class="thumb" ng-href="#/app/picture/{{uid}}/{{wish.$id}}">
                     <img ng-src="{{pictures[wish.$id]}}" ng-if="pictures[wish.$id]">
                 </a>
+                <h2><b>{{wish.name}}</b></h2>
+                <p>{{wish.time | date}}</p>
+
+            </div>
+
+            <div class="item item-body" ng-show="wish.detail || wish.url">
                 <p>{{wish.detail}}</p>
                 <p class='url' style="overflow: hidden;" ng-show='wish.url' ng-click="clickUrl(wish.url)">{{wish.url}}</p>
             </div>
 
             <div class="item tabs tabs-secondary tabs-icon-left" ng-show='mode.editable'>
                 <a class="tab-item" ng-click="mode.leftBtnOnClick($index)">
-                    <i class="icon ion-cash"></i> {{mode.leftBtnText}}
+                    <i class="icon ion-ios-cart"></i> {{mode.leftBtnText}}
                 </a>
                 <a class="tab-item" ng-href="#/app/wish/{{uid}}?wishId={{wish.$id}}">
-                    <i class="icon ion-edit"></i> Edit
+                    <i class="icon ion-ios-compose"></i> Edit
                 </a>
                 <a class="tab-item" href="#" ng-click='removeWish(wish.$id)'>
-                    <i class="icon ion-trash-b"></i> Delete
+                    <i class="icon ion-ios-trash"></i> Delete
                 </a>
             </div>
         </div>
