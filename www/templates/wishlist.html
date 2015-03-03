@@ -8,15 +8,14 @@
         </div>
         <div class="list card" ng-repeat="wish in wishlist">
 
-            <div class="item item-avatar">
-                <!-- <img ng-src="{{pictures[wish.$id]}}"> -->
+            <div class="item item-avatar" style="padding-left: 20px">
                 <h2><b>{{wish.name}}</b></h2>
                 <p>{{wish.time | date}}</p>
             </div>
 
             <div class="item item-body">
-                <a ng-href="#/app/picture/{{uid}}/{{wish.$id}}">
-                    <img class="full-image" ng-src="{{pictures[wish.$id]}}" ng-if="pictures[wish.$id]">
+                <a ng-href="#/app/picture/{{uid}}/{{wish.$id}}" class="photo" style="float: right;">
+                    <img ng-src="{{pictures[wish.$id]}}" ng-if="pictures[wish.$id]">
                 </a>
                 <p>{{wish.detail}}</p>
                 <p class='url' ng-show='wish.url' ng-click="clickUrl(wish.url)">{{wish.url}}</p>
