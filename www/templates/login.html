@@ -2,9 +2,9 @@
     <ion-header-bar class="bar-calm">
         <h1 class="title">{{mode.title}}</h1>
     </ion-header-bar>
-    <ion-content>
+    <ion-content style="background-image: url('img/drift_bottle.jpg'); background-size: 100% auto; background-position: center;">
         <form ng-submit="mode.submit()">
-            <div class="list">
+            <div class="list list-inset">
                 <label class="item item-input">
                     <span class="input-label">Email</span>
                     <input type="text" required='true' ng-model="loginData.email">
@@ -17,22 +17,25 @@
                     <span class="input-label">Display name</span>
                     <input type="text" required='true' ng-model="loginData.displayName">
                 </label>
-                <label class="item">
-                    <button class="button button-block button-positive" type="submit" ng-disabled="mode.buttonDisabled()">
-                        {{mode.buttonText}}
-                    </button>
-                </label>
-                <div class="item item-divider" ng-show='mode === modeEnum.LOGIN' style='text-align: center;'>
-                    <a href="#" ng-click='setMode(modeEnum.FORGET_PASSWORD)'>Forget password?</a>
-                    <b>&nbsp;&nbsp;OR&nbsp;&nbsp;</b>
-                    <a ng-click='setMode(modeEnum.SIGN_UP)' href="#">Sign up!</a>
-                </div>
-                <div class="item item-divider" ng-show='mode === modeEnum.SIGN_UP' style='text-align: center;'>
-                    Already have an account? <a ng-click='setMode(modeEnum.LOGIN)' href="#">Login</a>
-                </div>
-                <div class="item item-divider" ng-show='mode === modeEnum.FORGET_PASSWORD' style='text-align: center;'>
-                    <a ng-click='setMode(modeEnum.LOGIN)' href="#">Login</a>
-                </div>
+
+            </div>
+
+            <div style="margin: 0 10px;">
+                <button class="button button-block button-positive" type="submit" ng-disabled="mode.buttonDisabled()">
+                    {{mode.buttonText}}
+                </button>
+            </div>
+
+            <div ng-show='mode === modeEnum.LOGIN' class="button-link">
+                <a ng-click='setMode(modeEnum.FORGET_PASSWORD)'>Forget password?</a>
+                <b>&nbsp;&nbsp;|&nbsp;&nbsp;</b>
+                <a ng-click='setMode(modeEnum.SIGN_UP)'>Sign up!</a>
+            </div>
+            <div ng-show='mode === modeEnum.SIGN_UP' class="button-link">
+                Already have an account? <a ng-click='setMode(modeEnum.LOGIN)'>Login</a>
+            </div>
+            <div ng-show='mode === modeEnum.FORGET_PASSWORD' class="button-link">
+                Return to <a ng-click='setMode(modeEnum.LOGIN)'>Login</a>
             </div>
         </form>
     </ion-content>

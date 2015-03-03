@@ -21,7 +21,7 @@ angular.module('app', ['app.controllers', 'app.services', 'ionic', 'firebase'])
             template: 'The app will close. Please check your cellular or wifi connection.'
         }).then(function() {
             ionic.Platform.exitApp();
-        }) ;
+        });
     });
 })
 
