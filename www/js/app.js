@@ -1,7 +1,8 @@
 angular.module('app', ['app.controllers', 'app.services', 'ionic', 'firebase'])
 
 .run(function($rootScope, $ionicPlatform, $ionicPopup) {
-    console.log('Platform: ', ionic.Platform.platform());
+    $rootScope.platform = ionic.Platform.platform();
+    console.log('Platform: ', $rootScope.platform);
 
     $ionicPlatform.ready(function() {
         // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard

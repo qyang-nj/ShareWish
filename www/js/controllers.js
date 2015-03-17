@@ -1,6 +1,6 @@
 angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
 
-.controller('AppCtrl', function($scope, $state, $ionicModal, $ionicHistory, $firebase, Utils, Ref, Auth) {
+.controller('AppCtrl', function($scope, $state, $ionicModal, $ionicHistory, $ionicLoading, $firebase, Utils, Ref, Auth) {
     $scope.loginData = {};
     var modeEnum = {
         LOGIN: {
@@ -72,10 +72,16 @@ angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
     });
 
     function login() {
+        $ionicLoading.show({
+            template: 'Logging in...'
+        });
+
         Auth.$authWithPassword($scope.loginData).then(function(authData) {
             $scope.closeLogin();
         }).catch(function(error) {
             Utils.toastLong(error.message);
+        }).finally(function() {
+            $ionicLoading.hide();
         });
     }
 
