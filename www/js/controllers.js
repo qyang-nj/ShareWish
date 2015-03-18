@@ -182,12 +182,23 @@ angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
 
         var pictures = {};
         list.forEach(function(entry) {
-            $firebase(Ref.wishPictures(uid, entry.$id).limitToFirst(1)).$asArray().$loaded().then(function(picList) {
-                if (picList.length > 0) {
-                    pictures[entry.$id] = picList[0].$value;
-                }
+            var wishId = entry.$id;
+            var firstPic = $firebase(Ref.wishPictures(uid, wishId).limitToFirst(1)).$asArray();
+            var loadFirstPic = function(wishId) {
+                firstPic.$loaded().then(function(picList) {
+                    if (picList.length > 0) {
+                        pictures[wishId] = picList[0].$value;
+                    } else {
+                        delete pictures[wishId];
+                    }
+                });
+            };
+
+            firstPic.$watch(function(event) {
+                loadFirstPic(wishId);
             });
         });
+
         $scope.pictures = pictures;
     }).finally(function() {
         $ionicLoading.hide();
