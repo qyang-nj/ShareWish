@@ -5,7 +5,7 @@ angular.module('app.services', ['ngCordova'])
 
     /* Firebase keys cannot have a period (.) in them, so this converts the emails to valid keys */
     Utils.emailToKey = function(emailAddress) {
-        return emailAddress.replace(/\./g, ',');
+        return emailAddress.toLowerCase().replace(/\./g, ',');
     };
 
     Utils.validateEmail = function(email) {

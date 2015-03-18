@@ -5,15 +5,15 @@ angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
     var modeEnum = {
         LOGIN: {
             buttonText: "Login",
-            title: "Login",
+            title: "Share Wish",
             submit: login,
             buttonDisabled: function() {
                 return !$scope.loginData.email || !$scope.loginData.password;
-            }
+            },
         },
         SIGN_UP: {
             buttonText: "Sign Up",
-            title: "Sign Up",
+            title: "Share Wish",
             submit: signup,
             buttonDisabled: function() {
                 return !$scope.loginData.email || !$scope.loginData.password || !$scope.loginData.displayName;
@@ -71,12 +71,25 @@ angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
         }
     });
 
-    function login() {
+    function login(onSuccess) {
+        if (!$scope.loginData.email) {
+            Utils.toastLong("Please input email.");
+            return;
+        }
+
+        if (!$scope.loginData.password) {
+            Utils.toastLong("Please input password.");
+            return;
+        }
+
         $ionicLoading.show({
             template: 'Loading...'
         });
 
         Auth.$authWithPassword($scope.loginData).then(function(authData) {
+            if (onSuccess) {
+                onSuccess();
+            }
             $scope.closeLogin();
         }).catch(function(error) {
             Utils.toastLong(error.message);
@@ -86,17 +99,38 @@ angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
     }
 
     function signup() {
+        if (!$scope.loginData.email) {
+            Utils.toastLong("Please input email.");
+            return;
+        }
+
+        if (!$scope.loginData.password) {
+            Utils.toastLong("Please input password.");
+            return;
+        }
+
+        if (!$scope.loginData.displayName) {
+            Utils.toastLong("Display is the name shown to others.");
+            return;
+        }
+
         Auth.$createUser($scope.loginData).then(function(userData) {
             console.log("User " + userData.uid + " created successfully!");
-            $firebase(Ref.emailUidMap().child(Utils.emailToKey($scope.loginData.email))).$set(userData.uid);
-            $firebase(Ref.displayName(userData.uid)).$set($scope.loginData.displayName);
-            login();
+            login(function() {
+                $firebase(Ref.emailUidMap().child(Utils.emailToKey($scope.loginData.email))).$set(userData.uid);
+                $firebase(Ref.displayName(userData.uid)).$set($scope.loginData.displayName);
+            });
         }).catch(function(error) {
             Utils.toastLong(error.message);
         });
     }
 
     function forgetPassword() {
+        if (!$scope.loginData.email) {
+            Utils.toastLong("Please input your registered email.");
+            return;
+        }
+
         Auth.$resetPassword($scope.loginData).then(function() {
             Utils.toastLong("Password reset email sent successfully!");
         }).catch(function(error) {

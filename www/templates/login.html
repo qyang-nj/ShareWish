@@ -7,21 +7,21 @@
             <div class="list list-inset">
                 <label class="item item-input">
                     <span class="input-label">Email</span>
-                    <input type="text" required='true' ng-model="loginData.email">
+                    <input type="text" ng-model="loginData.email">
                 </label>
                 <label class="item item-input" ng-if='mode === modeEnum.LOGIN || mode === modeEnum.SIGN_UP'>
                     <span class="input-label">Password</span>
-                    <input type="password" required='true' ng-model="loginData.password">
+                    <input type="password" ng-model="loginData.password">
                 </label>
                 <label class="item item-input" ng-if='mode === modeEnum.SIGN_UP'>
                     <span class="input-label">Display name</span>
-                    <input type="text" required='true' ng-model="loginData.displayName">
+                    <input type="text" ng-model="loginData.displayName">
                 </label>
 
             </div>
 
             <div style="margin: 0 10px;">
-                <button class="button button-block button-positive" type="submit" ng-disabled="mode.buttonDisabled()">
+                <button class="button button-block button-positive" type="submit">
                     {{mode.buttonText}}
                 </button>
             </div>
