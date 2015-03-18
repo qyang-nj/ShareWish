@@ -73,7 +73,7 @@ angular.module('app.controllers', ['app.services', 'ngStorage', 'firebase'])
 
     function login() {
         $ionicLoading.show({
-            template: 'Logging in...'
+            template: 'Logging in'
         });
 
         Auth.$authWithPassword($scope.loginData).then(function(authData) {

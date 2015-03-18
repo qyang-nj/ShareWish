@@ -26,9 +26,9 @@
                     Purchased
                 </ion-item>
             </ion-list>
-            <div class="item item-divider">SHARED</div>
+            <div class="item item-divider" ng-show="beSharedList.length > 0">SHARED</div>
             <!-- <p class="shared-title" ng-show="beSharedList.length > 0">Shared</p> -->
-            <ion-list>
+            <ion-list ng-show="beSharedList.length > 0">
                 <ion-item nav-clear menu-close ng-href="#/app/wishlist/{{share.uid}}" ng-repeat="share in beSharedList">
                     {{share.displayName}}
                 </ion-item>
