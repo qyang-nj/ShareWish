@@ -52,27 +52,27 @@ angular.module('app.services', ['ngCordova'])
     };
 
     Ref.wishlist = function(uid) {
-        return refRoot.child('users/' + uid + '/share/wishlist');
+        return refRoot.child('users/' + uid + '/wishlist');
     };
 
     Ref.wishPictures = function(uid, wishId) {
-        return refRoot.child('users/' + uid + '/share/pictures/' + wishId);
+        return refRoot.child('users/' + uid + '/pictures/' + wishId);
     };
 
     Ref.shareList = function(uid) {
-        return refRoot.child('users/' + uid + '/private/shareList');
+        return refRoot.child('users/' + uid + '/shareList');
     };
 
     Ref.beSharedList = function(uid) {
-        return refRoot.child('users/' + uid + '/public/besharedList');
+        return refRoot.child('users/' + uid + '/besharedList');
     };
 
     Ref.displayName = function(uid) {
-        return refRoot.child('users/' + uid + '/share/displayName/');
+        return refRoot.child('users/' + uid + '/displayName');
     };
 
     Ref.profile = function(uid) {
-        return refRoot.child('users/' + uid + '/private/profile/');
+        return refRoot.child('users/' + uid + '/profile');
     };
 
     return Ref;
